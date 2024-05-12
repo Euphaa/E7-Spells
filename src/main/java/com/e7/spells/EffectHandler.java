@@ -8,7 +8,8 @@ import net.minecraft.potion.Potion;
 
 public class EffectHandler
 {
-    public static void applyPotionEffect(PlayerEntity player, StatusEffect effect, int duration, int amplifier) {
+    public static void applyPotionEffect(PlayerEntity player, StatusEffect effect, int duration, int amplifier)
+    {
         StatusEffectInstance effectInstance = new StatusEffectInstance(effect, duration, amplifier);
         player.addStatusEffect(effectInstance);
     }
@@ -16,6 +17,6 @@ public class EffectHandler
     public static void addStrengthEffectToThePlayer()
     {
         PlayerEntity player = E7Spells.getPlayer();
-        applyPotionEffect(player, StatusEffects.STRENGTH, 10, 1);
+        applyPotionEffect(player, StatusEffects.STRENGTH, 200, 0);
     }
 }
