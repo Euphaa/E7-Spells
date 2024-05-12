@@ -1,5 +1,6 @@
 package com.e7.spells;
 
+import com.e7.spells.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -24,6 +25,8 @@ public class E7Spells implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
+
+		ModItems.registerModItems();
 
 		/* register key bindings */
 		KeyBindings.registerKeys();
