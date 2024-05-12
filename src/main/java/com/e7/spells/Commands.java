@@ -19,18 +19,18 @@ public class Commands
             })));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("domath")
-                .then(argument("value1", IntegerArgumentType.integer())
-                .then(argument("value2", IntegerArgumentType.integer())
-                .requires(source -> source.hasPermissionLevel(0))
-                .executes(context -> {
-                    final int v1 = IntegerArgumentType.getInteger(context, "value1");
-                    final int v2 = IntegerArgumentType.getInteger(context, "value2");
+            .then(argument("value1", IntegerArgumentType.integer())
+            .then(argument("value2", IntegerArgumentType.integer())
+            .requires(source -> source.hasPermissionLevel(0))
+            .executes(context -> {
+                final int v1 = IntegerArgumentType.getInteger(context, "value1");
+                final int v2 = IntegerArgumentType.getInteger(context, "value2");
 
-                    context.getSource().sendFeedback(() -> Text.literal("%d + %d = %d".formatted(v1, v2, v1 + v2)), false);
+                context.getSource().sendFeedback(() -> Text.literal("%d + %d = %d".formatted(v1, v2, v1 + v2)), false);
 
-                    return 1;
-                }
-            )))));
+                return 1;
+            }
+        )))));
 
     }
 
