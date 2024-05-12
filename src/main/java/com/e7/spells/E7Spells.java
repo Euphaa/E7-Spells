@@ -2,6 +2,8 @@ package com.e7.spells;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,5 +21,9 @@ public class E7Spells implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Hello Fabric world!");
+	}
+
+	public static PlayerEntity getPlayer() {
+		return MinecraftClient.getInstance().player;
 	}
 }
