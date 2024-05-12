@@ -18,16 +18,12 @@
 		"main": [
 			"com.e7.spells.E7Spells"
 		],
-		"client": [
-			"com.e7.spells.E7SpellsClient"
+		"fabric-datagen": [
+			"com.e7.spells.E7SpellsDataGenerator"
 		]
 	},
 	"mixins": [
-		"e7-spells.mixins.json",
-		{
-			"config": "e7-spells.client.mixins.json",
-			"environment": "client"
-		}
+		"e7-spells.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.15.11",
