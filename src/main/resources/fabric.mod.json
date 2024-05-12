@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "e7-spells",
+	"version": "${version}",
+	"name": "E7 Spells",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/e7-spells/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.e7.spells.E7Spells"
+		],
+		"client": [
+			"com.e7.spells.E7SpellsClient"
+		]
+	},
+	"mixins": [
+		"e7-spells.mixins.json",
+		{
+			"config": "e7-spells.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
