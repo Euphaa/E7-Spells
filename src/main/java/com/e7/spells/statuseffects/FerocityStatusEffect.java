@@ -18,8 +18,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.tick.SimpleTickScheduler;
-import scheduler.Scheduleable;
-import scheduler.Scheduler;
 
 public class FerocityStatusEffect extends StatusEffect
 {
@@ -47,6 +45,7 @@ public class FerocityStatusEffect extends StatusEffect
     public static void registerEffect()
     {
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+
 //
 //            // Check if the attacking entity is a player and has the custom status effect
 //            if (!player.hasStatusEffect(E7Spells.FEROCITY)) return ActionResult.PASS;
@@ -69,6 +68,7 @@ public class FerocityStatusEffect extends StatusEffect
 
     public static void procFerocity(Entity player, World world, Entity entity, float damage)
     {
+
 //        entity.damage(, damage);
     }
 
