@@ -1,27 +1,27 @@
 package com.e7.spells.statuseffects;
 
 import com.e7.spells.E7Spells;
+import com.e7.spells.ModDamageTypes;
+import com.e7.spells.Scheduler;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.tick.SimpleTickScheduler;
 
 public class FerocityStatusEffect extends StatusEffect
 {
 
+    private static final float FEROCITY_DAMAGE_MULTIPLIER = 1f;
+    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .5f;
     public FerocityStatusEffect()
     {
         super(StatusEffectCategory.BENEFICIAL, 0x880808);
@@ -44,24 +44,44 @@ public class FerocityStatusEffect extends StatusEffect
 
     public static void registerEffect()
     {
-        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+        AttackEntityCallback.EVENT.register((attacker, world, hand, victim, hitResult) -> {
 
-//
-//            // Check if the attacking entity is a player and has the custom status effect
-//            if (!player.hasStatusEffect(E7Spells.FEROCITY)) return ActionResult.PASS;
-//
-////            StatusEffectInstance effectInstance = player.getStatusEffect(E7Spells.FEROCITY);
-//            double damage = player.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
-//
-//
-//
-//            // Print some information about the attack
-//            System.out.println("Attacker: " + player.getName().getString());
-//            System.out.println("Victim: " + entity.getName().getString());
-//            System.out.println("Original Damage: " + damage);
-//
-////            Scheduler.Builder(, world).schedule(10);
-////                entity.damage();
+            if (world.isClient()) return ActionResult.PASS;
+            if (!attacker.hasStatusEffect(E7Spells.FEROCITY)) return ActionResult.PASS;
+//            if (entity instanceof LivingEntity) return ActionResult.PASS;
+//            player.sendMessage(Text.literal("player is also a living entity"));
+            float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
+            Scheduler.addTask(10, () -> {
+                victim.damage(ModDamageTypes.of(world, ModDamageTypes.CUSTOM_DAMAGE_TYPE), damage * FEROCITY_DAMAGE_MULTIPLIER);
+                Vec3d direction = victim.getPos().subtract(attacker.getPos()).normalize();
+                ((LivingEntity) victim).takeKnockback(FEROCITY_KNOCKBACK_MULTIPLIER, -direction.getX(), -direction.getZ());
+                E7Spells.getPlayer().sendMessage(Text.literal("ferocity proc for " + damage * FEROCITY_DAMAGE_MULTIPLIER + " damage"));
+
+
+                // need to send entity hurt packet
+//                for (ServerPlayerEntity player : PlayerLookup.tracking(victim)) {
+//                    ServerPlayNetworking.send(player, , buf);
+//                }
+
+
+                world.playSound(
+                        null, // Player - if non-null, will play sound for every nearby player *except* the specified player
+                        BlockPos.ofFloored(victim.getPos()), // The position of where the sound will come from
+                        SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, // The sound that will play, in this case, the sound the anvil plays when it lands.
+                        SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
+                        1.5f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
+                        .8f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
+                );
+                world.playSound(
+                        null, // Player - if non-null, will play sound for every nearby player *except* the specified player
+                        BlockPos.ofFloored(victim.getPos()), // The position of where the sound will come from
+                        SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, // The sound that will play, in this case, the sound the anvil plays when it lands.
+                        SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
+                        1.5f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
+                        1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
+                );
+            });
+
             return ActionResult.PASS; // Continue with normal attack handling
         });
     }

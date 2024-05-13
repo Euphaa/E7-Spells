@@ -1,4 +1,5 @@
 {
   "item.e7-spells.smile": "Smile",
-  "effect.e7-spells.ferocity": "Ferocity"
+  "effect.e7-spells.ferocity": "Ferocity",
+  "death.attack.ferocity": "%1$s died whilst fighting something ferocious"
 }
