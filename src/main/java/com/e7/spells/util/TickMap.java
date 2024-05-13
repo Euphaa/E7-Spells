@@ -1,5 +1,8 @@
 package com.e7.spells.util;
 
+import com.e7.spells.E7Spells;
+import net.minecraft.text.Text;
+
 import java.util.*;
 
 public class TickMap
@@ -35,5 +38,6 @@ public class TickMap
             map.put(delay, new ArrayList<>());
         }
         map.get(delay).add(task);
+        soonestEvent = map.firstKey();
     }
 }
