@@ -23,7 +23,10 @@ public class E7Spells implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
+		/* register event handlers */
+		TickHandler.registerTicker();
 
+		/* register items */
 		ModItems.registerModItems();
 
 		/* register key bindings */
