@@ -10,6 +10,6 @@ public class ServerPacketManager
 
     public static void sendPacketToClient(ServerPlayerEntity user, Identifier channelName, PacketByteBuf buf)
     {
-        ServerPlayNetworking.send((ServerPlayerEntity) user, channelName, buf);
+        ServerPlayNetworking.send(user, channelName, buf);
     }
 }

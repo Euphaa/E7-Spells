@@ -65,10 +65,9 @@ public class FerocityStatusEffect extends StatusEffect
 
             float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
             Scheduler.addTask(10, () -> {
-                victim.damage(ModDamageTypes.of(world, ModDamageTypes.CUSTOM_DAMAGE_TYPE), damage * FEROCITY_DAMAGE_MULTIPLIER);
+                victim.damage(ModDamageTypes.of(world, ModDamageTypes.CUSTOM_DAMAGE_TYPE), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
                 Vec3d direction = victim.getPos().subtract(attacker.getPos()).normalize();
                 ((LivingEntity) victim).takeKnockback(FEROCITY_KNOCKBACK_MULTIPLIER, -direction.getX(), -direction.getZ());
-                E7Spells.getPlayer().sendMessage(Text.literal("ferocity proc for " + damage * FEROCITY_DAMAGE_MULTIPLIER + " damage"));
 
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeDouble(victim.getX());
@@ -79,24 +78,8 @@ public class FerocityStatusEffect extends StatusEffect
                     ServerPacketManager.sendPacketToClient(player, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
                 }
 
-                // need to send entity hurt packet
-//                for (ServerPlayerEntity player : PlayerLookup.tracking(victim)) {
-//                    ServerPlayNetworking.send(player, , buf);
-//                }
-//                world.addParticle(
-//                        ,
-//                        victim.getX(),
-//                        victim.getY(),
-//                        victim.getZ(),
-//                        0,
-//                        0,
-//                        0
-//                );
-
                 LivingEntity x = (LivingEntity) victim;
-                attacker.sendMessage(Text.literal("before: " + x.hurtTime));
-                x.hurtTime = 9;
-                attacker.sendMessage(Text.literal("after: " + x.hurtTime));
+                x.hurtTime = 6;
 
                 world.playSound(
                         null, // Player - if non-null, will play sound for every nearby player *except* the specified player
@@ -128,7 +111,6 @@ public class FerocityStatusEffect extends StatusEffect
 
     public static void createFerocityParticles(MinecraftClient client, double x, double y, double z)
     {
-        E7Spells.getPlayer().sendMessage(Text.literal("showing sweep particle at %f %f %f".formatted(x, y, z)));
         client.particleManager.addParticle(ParticleTypes.SWEEP_ATTACK,
                 x, y, z,
                 0, 0, 0
