@@ -2,6 +2,7 @@ package com.e7.spells;
 
 import com.e7.spells.item.ModItems;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
+import com.e7.spells.util.Scheduler;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.client.MinecraftClient;

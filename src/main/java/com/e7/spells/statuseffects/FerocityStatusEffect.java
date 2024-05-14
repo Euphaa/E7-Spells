@@ -2,13 +2,15 @@ package com.e7.spells.statuseffects;
 
 import com.e7.spells.E7Spells;
 import com.e7.spells.ModDamageTypes;
-import com.e7.spells.Scheduler;
+import com.e7.spells.util.Scheduler;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -20,7 +22,7 @@ import net.minecraft.world.World;
 public class FerocityStatusEffect extends StatusEffect
 {
 
-    private static final float FEROCITY_DAMAGE_MULTIPLIER = 1f;
+    private static final float FEROCITY_DAMAGE_MULTIPLIER = 5f;
     private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .5f;
     public FerocityStatusEffect()
     {
@@ -62,7 +64,15 @@ public class FerocityStatusEffect extends StatusEffect
 //                for (ServerPlayerEntity player : PlayerLookup.tracking(victim)) {
 //                    ServerPlayNetworking.send(player, , buf);
 //                }
-
+//                world.addParticle(
+//                        ,
+//                        victim.getX(),
+//                        victim.getY(),
+//                        victim.getZ(),
+//                        0,
+//                        0,
+//                        0
+//                );
 
                 world.playSound(
                         null, // Player - if non-null, will play sound for every nearby player *except* the specified player

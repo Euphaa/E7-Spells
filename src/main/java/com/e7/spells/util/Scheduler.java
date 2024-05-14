@@ -1,4 +1,4 @@
-package com.e7.spells;
+package com.e7.spells.util;
 
 import com.e7.spells.util.Task;
 import com.e7.spells.util.TickMap;
