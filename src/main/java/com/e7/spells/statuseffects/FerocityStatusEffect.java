@@ -8,6 +8,7 @@ import com.e7.spells.util.Scheduler;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -69,7 +70,6 @@ public class FerocityStatusEffect extends StatusEffect
                 ((LivingEntity) victim).takeKnockback(FEROCITY_KNOCKBACK_MULTIPLIER, -direction.getX(), -direction.getZ());
                 E7Spells.getPlayer().sendMessage(Text.literal("ferocity proc for " + damage * FEROCITY_DAMAGE_MULTIPLIER + " damage"));
 
-                victim.handleAttack(attacker);
                 PacketByteBuf buf = PacketByteBufs.create();
                 buf.writeDouble(victim.getX());
                 buf.writeDouble(victim.getY());
@@ -126,17 +126,13 @@ public class FerocityStatusEffect extends StatusEffect
 //        entity.damage(, damage);
     }
 
-    public static void createFerocityParticles(World world, Entity entity)
+    public static void createFerocityParticles(MinecraftClient client, double x, double y, double z)
     {
-//        world.addParticle(
-//                ,
-//                entity.getX(),
-//                entity.getY(),
-//                entity.getZ(),
-//                0,
-//                0,
-//                0
-//        );
+        E7Spells.getPlayer().sendMessage(Text.literal("showing sweep particle at %f %f %f".formatted(x, y, z)));
+        client.particleManager.addParticle(ParticleTypes.SWEEP_ATTACK,
+                x, y, z,
+                0, 0, 0
+        );
     }
 
 //    @Override

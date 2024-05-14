@@ -10,6 +10,6 @@ public class ServerPacketManager
 
     public static void sendPacketToClient(ServerPlayerEntity user, Identifier channelName, PacketByteBuf buf)
     {
-        ServerPlayNetworking.send((ServerPlayerEntity) user, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
+        ServerPlayNetworking.send((ServerPlayerEntity) user, channelName, buf);
     }
 }
