@@ -14,11 +14,14 @@ import net.minecraft.util.Identifier;
 public class ModItems {
         //Test Item
         public static final Item SMILE = registerItem("smile", new Smile(new FabricItemSettings()));
+    public static final Item GUN = registerItem("gun", new Smile(new FabricItemSettings()));
 
         //Make thing available in creative tabs
         private static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {
             entries.add(SMILE);
+            entries.add(GUN);
         }
+
 
         //Setting up for all future items
         private static Item registerItem(String name, Item item) {

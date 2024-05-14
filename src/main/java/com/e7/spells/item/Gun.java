@@ -1,10 +1,7 @@
 package com.e7.spells.item;
 
 import com.e7.spells.E7Spells;
-import com.e7.spells.EffectHandler;
-import com.e7.spells.statuseffects.FerocityStatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,11 +9,15 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+public class Gun extends Item {
 
-public class Smile extends Item {
-
-    public Smile(Settings settings) {
+    public Gun(Settings settings) {
         super(settings);
+    }
+
+
+    public int getDurability() {
+        return 500;
     }
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
@@ -24,7 +25,7 @@ public class Smile extends Item {
 
             if (hand == Hand.MAIN_HAND) {
 
-                player.addStatusEffect (new StatusEffectInstance(E7Spells.FEROCITY, 10*20, 1));
+                player.kill();
 
                 //player.getStackInHand(hand).decrement(1);
             }
