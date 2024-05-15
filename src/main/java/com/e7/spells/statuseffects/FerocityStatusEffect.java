@@ -23,7 +23,7 @@ public class FerocityStatusEffect extends StatusEffect
 {
 
     private static final float FEROCITY_DAMAGE_MULTIPLIER = 5f;
-    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .5f;
+    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = 0.5f;
     public FerocityStatusEffect()
     {
         super(StatusEffectCategory.BENEFICIAL, 0x880808);

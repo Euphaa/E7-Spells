@@ -12,9 +12,10 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class ModItems {
-        //Test Item
+
+    //Test Item
         public static final Item SMILE = registerItem("smile", new Smile(new FabricItemSettings()));
-    public static final Item GUN = registerItem("gun", new Smile(new FabricItemSettings()));
+    public static final Item GUN = registerItem("gun", new Gun(new FabricItemSettings()));
 
         //Make thing available in creative tabs
         private static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {

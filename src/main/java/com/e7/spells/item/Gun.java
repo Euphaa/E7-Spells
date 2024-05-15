@@ -16,10 +16,6 @@ public class Gun extends Item {
     }
 
 
-    public int getDurability() {
-        return 500;
-    }
-
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient){
 
