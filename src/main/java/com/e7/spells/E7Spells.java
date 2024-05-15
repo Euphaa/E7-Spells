@@ -1,5 +1,7 @@
 package com.e7.spells;
 
+import com.e7.spells.entity.ModEntites;
+import com.e7.spells.entity.custom.GoopEntity;
 import com.e7.spells.item.ModItems;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.ServerPacketManager;
@@ -7,6 +9,7 @@ import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.util.Scheduler;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.effect.StatusEffect;
@@ -44,6 +47,8 @@ public class E7Spells implements ModInitializer
 		/* register effects */
 		Registry.register(Registries.STATUS_EFFECT, new Identifier(MODID, "ferocity"), FEROCITY);
 		FerocityStatusEffect.registerEffect();
+
+		FabricDefaultAttributeRegistry.register(ModEntites.GOOP, GoopEntity.createGloopAttributes());
 
 
 
