@@ -12,11 +12,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -26,15 +28,16 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.trunk.BendingTrunkPlacer;
 
-import java.sql.Array;
+import java.util.Random;
 
 public class FerocityStatusEffect extends StatusEffect
 {
 
     private static final float FEROCITY_DAMAGE_MULTIPLIER = 1f;
-    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .8f;
+    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .7f;
+    private static final int FEROCITY_HIT_DELAY = 9;
+    private static final int FEROCITY_HURT_TIME = 6;
     public FerocityStatusEffect()
     {
         super(StatusEffectCategory.BENEFICIAL, 0x880808);
@@ -59,55 +62,92 @@ public class FerocityStatusEffect extends StatusEffect
     {
         AttackEntityCallback.EVENT.register((attacker, world, hand, victim, hitResult) -> {
 
-            if (world.isClient()) return ActionResult.PASS;
-            if (!attacker.hasStatusEffect(E7Spells.FEROCITY)) return ActionResult.PASS;
-            if (((LivingEntity) victim).hurtTime > 0) return ActionResult.PASS;
+            if (victim instanceof EnderDragonPart) victim = ((EnderDragonPart) victim).owner;
+            if (!doesFerocityProc(attacker, world, victim)) return ActionResult.PASS;
 
-            float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
-            Scheduler.addTask(10, () -> {
-                victim.damage(ModDamageTypes.of(world, ModDamageTypes.CUSTOM_DAMAGE_TYPE), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
-                Vec3d direction = victim.getPos().subtract(attacker.getPos()).normalize();
-                ((LivingEntity) victim).takeKnockback(FEROCITY_KNOCKBACK_MULTIPLIER, -direction.getX(), -direction.getZ());
-
-                PacketByteBuf buf = PacketByteBufs.create();
-                buf.writeDouble(victim.getX());
-                buf.writeDouble(victim.getY());
-                buf.writeDouble(victim.getZ());
-                for (ServerPlayerEntity player : PlayerLookup.tracking(victim))
-                {
-                    ServerPacketManager.sendPacketToClient(player, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
-                }
-
-                LivingEntity x = (LivingEntity) victim;
-                x.hurtTime = 6;
-
-                world.playSound(
-                        null, // Player - if non-null, will play sound for every nearby player *except* the specified player
-                        BlockPos.ofFloored(victim.getPos()), // The position of where the sound will come from
-                        SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, // The sound that will play, in this case, the sound the anvil plays when it lands.
-                        SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
-                        1.5f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
-                        .8f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
-                );
-                world.playSound(
-                        null, // Player - if non-null, will play sound for every nearby player *except* the specified player
-                        BlockPos.ofFloored(victim.getPos()), // The position of where the sound will come from
-                        SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, // The sound that will play, in this case, the sound the anvil plays when it lands.
-                        SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
-                        1.5f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
-                        1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
-                );
-            });
+            procFerocity(attacker, world, victim);
 
             return ActionResult.PASS; // Continue with normal attack handling
         });
     }
 
-    public static void procFerocity(Entity player, World world, Entity entity, float damage)
+    private static boolean doesFerocityProc(PlayerEntity attacker, World world, Entity victim)
     {
-
-//        entity.damage(, damage);
+        if (world.isClient()) return false;
+        if (!attacker.hasStatusEffect(E7Spells.FEROCITY)) return false;
+        if (!(victim instanceof LivingEntity)) return false;
+        if (((LivingEntity) victim).hurtTime > 0) return false;
+        return true;
     }
+
+    private static boolean doesFerocityProc(PlayerEntity attacker, World world, EnderDragonEntity victim)
+    {
+        if (world.isClient()) return false;
+        if (!attacker.hasStatusEffect(E7Spells.FEROCITY)) return false;
+        if (victim.hurtTime > 0) return false;
+        return true;
+    }
+
+    private static void procFerocity(PlayerEntity attacker, World world, Entity victim)
+    {
+        float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
+        int ferocityLevel = attacker.getStatusEffect(E7Spells.FEROCITY).getAmplifier() + 1;
+        int guarenteedProcs = Math.floorDiv(ferocityLevel, 2);
+        if (ferocityLevel % 2 == 1 && new Random().nextInt(2) == 1) guarenteedProcs++;
+        attacker.sendMessage(Text.literal("lvl: " + ferocityLevel));
+        attacker.sendMessage(Text.literal("procs: " + guarenteedProcs));
+
+        for (int i = 1; i <= guarenteedProcs; i++)
+        {
+            Scheduler.addTask(i * FEROCITY_HIT_DELAY, () -> {
+                doFerocitySwipe(attacker, world, victim, damage);
+            });
+        }
+
+
+    }
+
+    private static void doFerocitySwipe(PlayerEntity attacker, World world, Entity victim, float damage)
+    {
+        attacker.sendMessage(Text.literal("HP: " + ((LivingEntity) victim).getHealth()));
+        if (!victim.isAlive()) return;
+//        victim.damage(ModDamageTypes.of(world, ModDamageTypes.FEROCITY_DAMAGE_TYPE), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
+//        victim.damage(, damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
+        victim.damage(attacker.getDamageSources().playerAttack(attacker), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
+        Vec3d direction = victim.getPos().subtract(attacker.getPos()).normalize();
+        ((LivingEntity) victim).takeKnockback(FEROCITY_KNOCKBACK_MULTIPLIER, -direction.getX(), -direction.getZ());
+
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeDouble(victim.getX());
+        buf.writeDouble(victim.getY());
+        buf.writeDouble(victim.getZ());
+        for (ServerPlayerEntity player : PlayerLookup.tracking(victim))
+        {
+            ServerPacketManager.sendPacketToClient(player, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
+        }
+
+        LivingEntity x = (LivingEntity) victim;
+        if (x.hurtTime < 6) x.hurtTime = FEROCITY_HURT_TIME;
+
+
+        world.playSound(
+                null, // Player - if non-null, will play sound for every nearby player *except* the specified player
+                BlockPos.ofFloored(victim.getPos()), // The position of where the sound will come from
+                SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, // The sound that will play, in this case, the sound the anvil plays when it lands.
+                SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
+                1.5f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
+                .8f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
+        );
+        world.playSound(
+                null, // Player - if non-null, will play sound for every nearby player *except* the specified player
+                BlockPos.ofFloored(victim.getPos()), // The position of where the sound will come from
+                SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, // The sound that will play, in this case, the sound the anvil plays when it lands.
+                SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
+                1.5f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
+                1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
+        );
+    }
+
 
     public static void createFerocityParticles(MinecraftClient client, double x, double y, double z)
     {
