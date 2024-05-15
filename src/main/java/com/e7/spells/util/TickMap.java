@@ -16,7 +16,6 @@ public class TickMap
     public void tick()
     {
         currentTick++;
-        if (currentTick % 5 == 0) System.out.println(currentTick);
         if (currentTick == 10_000_000)
         {
             decrementEverything();
@@ -35,7 +34,6 @@ public class TickMap
 
     public void addTask(Integer delay, Task task)
     {
-        E7Spells.getPlayer().sendMessage(Text.literal("added task"));
         int time = currentTick + delay;
         if (!map.containsKey(time))
         {
