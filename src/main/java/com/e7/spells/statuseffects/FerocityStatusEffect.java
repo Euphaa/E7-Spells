@@ -94,8 +94,6 @@ public class FerocityStatusEffect extends StatusEffect
         int ferocityLevel = attacker.getStatusEffect(E7Spells.FEROCITY).getAmplifier() + 1;
         int guarenteedProcs = Math.floorDiv(ferocityLevel, 2);
         if (ferocityLevel % 2 == 1 && new Random().nextInt(2) == 1) guarenteedProcs++;
-        attacker.sendMessage(Text.literal("lvl: " + ferocityLevel));
-        attacker.sendMessage(Text.literal("procs: " + guarenteedProcs));
 
         for (int i = 1; i <= guarenteedProcs; i++)
         {
@@ -109,7 +107,6 @@ public class FerocityStatusEffect extends StatusEffect
 
     private static void doFerocitySwipe(PlayerEntity attacker, World world, Entity victim, float damage)
     {
-        attacker.sendMessage(Text.literal("HP: " + ((LivingEntity) victim).getHealth()));
         if (!victim.isAlive()) return;
 //        victim.damage(ModDamageTypes.of(world, ModDamageTypes.FEROCITY_DAMAGE_TYPE), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
 //        victim.damage(, damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
@@ -126,8 +123,8 @@ public class FerocityStatusEffect extends StatusEffect
             ServerPacketManager.sendPacketToClient(player, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
         }
 
-        LivingEntity x = (LivingEntity) victim;
-        if (x.hurtTime < 6) x.hurtTime = FEROCITY_HURT_TIME;
+//        LivingEntity x = (LivingEntity) victim;
+//        if (x.hurtTime < 6) x.hurtTime = FEROCITY_HURT_TIME;
 
 
         world.playSound(

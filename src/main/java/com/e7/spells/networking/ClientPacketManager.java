@@ -2,6 +2,11 @@ package com.e7.spells.networking;
 
 import com.e7.spells.statuseffects.FerocityStatusEffect;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 
 public class ClientPacketManager
 {
@@ -19,5 +24,10 @@ public class ClientPacketManager
                 FerocityStatusEffect.createFerocityParticles(client, coords[0], coords[1], coords[2]);
             });
         });
+    }
+
+    public static void sendPacketToClient(Identifier channel, PacketByteBuf buf)
+    {
+        ClientPlayNetworking.send(channel, buf);
     }
 }

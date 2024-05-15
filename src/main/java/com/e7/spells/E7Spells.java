@@ -2,6 +2,7 @@ package com.e7.spells;
 
 import com.e7.spells.item.ModItems;
 import com.e7.spells.networking.ClientPacketManager;
+import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.util.Scheduler;
 import net.fabricmc.api.ModInitializer;
@@ -27,6 +28,7 @@ public class E7Spells implements ModInitializer
 		/* register event handlers */
 		Scheduler.registerTicker();
 		ClientPacketManager.registerPacketListeners();
+		ServerPacketManager.registerPacketListeners();
 
 		/* register items */
 		ModItems.registerModItems();
