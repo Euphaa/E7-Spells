@@ -38,6 +38,7 @@ public class E7Spells implements ModInitializer
 		/* register items */
 		ModItems.registerModItems();
 
+
 		/* register key bindings */
 		KeyBindings.registerKeys();
 
@@ -50,6 +51,7 @@ public class E7Spells implements ModInitializer
 
 		FabricDefaultAttributeRegistry.register(ModEntites.GOOP, GoopEntity.createGloopAttributes());
 
+		ModPotions.registerPotions();
 
 
 

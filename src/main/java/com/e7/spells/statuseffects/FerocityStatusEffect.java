@@ -35,9 +35,8 @@ public class FerocityStatusEffect extends StatusEffect
 {
 
     private static final float FEROCITY_DAMAGE_MULTIPLIER = 1f;
-    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .7f;
-    private static final int FEROCITY_HIT_DELAY = 9;
-    private static final int FEROCITY_HURT_TIME = 6;
+    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .8f;
+    private static final int FEROCITY_HIT_DELAY = 10;
     public FerocityStatusEffect()
     {
         super(StatusEffectCategory.BENEFICIAL, 0x880808);
@@ -94,25 +93,26 @@ public class FerocityStatusEffect extends StatusEffect
         int ferocityLevel = attacker.getStatusEffect(E7Spells.FEROCITY).getAmplifier() + 1;
         int guarenteedProcs = Math.floorDiv(ferocityLevel, 2);
         if (ferocityLevel % 2 == 1 && new Random().nextInt(2) == 1) guarenteedProcs++;
+        Vec3d direction = attacker.getPos().subtract(victim.getPos()).normalize();
+        float knockback = (float) Math.log(ferocityLevel + 1.5) / 5;
 
         for (int i = 1; i <= guarenteedProcs; i++)
         {
-            Scheduler.addTask(i * FEROCITY_HIT_DELAY, () -> {
-                doFerocitySwipe(attacker, world, victim, damage);
+            Scheduler.addTask(i * FEROCITY_HIT_DELAY + 1, () -> {
+                doFerocitySwipe(attacker, world, victim, direction, damage, knockback);
             });
         }
 
 
     }
 
-    private static void doFerocitySwipe(PlayerEntity attacker, World world, Entity victim, float damage)
+    private static void doFerocitySwipe(PlayerEntity attacker, World world, Entity victim, Vec3d direction, float damage, float knockback)
     {
         if (!victim.isAlive()) return;
 //        victim.damage(ModDamageTypes.of(world, ModDamageTypes.FEROCITY_DAMAGE_TYPE), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
 //        victim.damage(, damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
-        victim.damage(attacker.getDamageSources().playerAttack(attacker), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
-        Vec3d direction = victim.getPos().subtract(attacker.getPos()).normalize();
-        ((LivingEntity) victim).takeKnockback(FEROCITY_KNOCKBACK_MULTIPLIER, -direction.getX(), -direction.getZ());
+        victim.damage(attacker.getDamageSources().playerAttack(attacker), damage * FEROCITY_DAMAGE_MULTIPLIER);
+        ((LivingEntity) victim).takeKnockback(knockback * FEROCITY_KNOCKBACK_MULTIPLIER, direction.getX(), direction.getZ());
 
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeDouble(victim.getX());
@@ -122,10 +122,6 @@ public class FerocityStatusEffect extends StatusEffect
         {
             ServerPacketManager.sendPacketToClient(player, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
         }
-
-//        LivingEntity x = (LivingEntity) victim;
-//        if (x.hurtTime < 6) x.hurtTime = FEROCITY_HURT_TIME;
-
 
         world.playSound(
                 null, // Player - if non-null, will play sound for every nearby player *except* the specified player
