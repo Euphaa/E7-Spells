@@ -1,10 +1,7 @@
 package com.e7.spells.item;
 
 import com.e7.spells.E7Spells;
-import com.e7.spells.EffectHandler;
-import com.e7.spells.statuseffects.FerocityStatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
