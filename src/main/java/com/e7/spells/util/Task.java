@@ -1,6 +1,8 @@
 package com.e7.spells.util;
 
+import net.minecraft.server.MinecraftServer;
+
 @FunctionalInterface
 public interface Task {
-    public void doTask();
+    void doTask(MinecraftServer server);
 }

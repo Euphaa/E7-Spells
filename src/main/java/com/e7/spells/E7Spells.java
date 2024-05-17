@@ -19,11 +19,14 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 public class E7Spells implements ModInitializer
 {
 	public static final String MODID = "e7-spells";
     public static final Logger E7SPELLS = LoggerFactory.getLogger(MODID);
 	public static final StatusEffect FEROCITY = new FerocityStatusEffect();
+	public static final Random random = new Random();
 
 
 
@@ -60,6 +63,7 @@ public class E7Spells implements ModInitializer
 
 	public static PlayerEntity getPlayer()
 	{
+
 		return MinecraftClient.getInstance().player;
 	}
 }

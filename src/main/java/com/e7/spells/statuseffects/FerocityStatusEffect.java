@@ -98,7 +98,7 @@ public class FerocityStatusEffect extends StatusEffect
 
         for (int i = 1; i <= guarenteedProcs; i++)
         {
-            Scheduler.addTask(i * FEROCITY_HIT_DELAY + 1, () -> {
+            Scheduler.addTask(i * FEROCITY_HIT_DELAY + 1, (server) -> {
                 doFerocitySwipe(attacker, world, victim, direction, damage, knockback);
             });
         }
@@ -142,10 +142,10 @@ public class FerocityStatusEffect extends StatusEffect
     }
 
 
-    public static void createFerocityParticles(MinecraftClient client, double x, double y, double z)
+    public static void createFerocityParticles(MinecraftClient client, Vec3d pos)
     {
         client.particleManager.addParticle(ParticleTypes.SWEEP_ATTACK,
-                x, y, z,
+                pos.getX(), pos.getY(), pos.getZ(),
                 0, 0, 0
         );
     }

@@ -2,9 +2,16 @@ package com.e7.spells.item;
 
 
 import com.e7.spells.E7Spells;
+import com.e7.spells.item.zombie_tools.ZombieSwordItem;
+import com.e7.spells.networking.ClientPacketManager;
+import com.e7.spells.networking.E7Packets;
+import com.e7.spells.util.Scheduler;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
@@ -13,9 +20,10 @@ import net.minecraft.util.Identifier;
 
 public class ModItems {
 
-    //Test Item
-        public static final Item SMILE = registerItem("smile", new Smile(new FabricItemSettings()));
+    public static final Item SMILE = registerItem("smile", new Smile(new FabricItemSettings()));
     public static final Item GUN = registerItem("gun", new Gun(new FabricItemSettings()));
+    public static final Item ZOMBIE_SWORD = new ZombieSwordItem();
+
 
         //Make thing available in creative tabs
         private static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {
@@ -25,12 +33,21 @@ public class ModItems {
 
 
         //Setting up for all future items
-        private static Item registerItem(String name, Item item) {
+        private static Item registerItem(String name, Item item)
+        {
             return Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, name), item);
         }
         //Registers the item into the game
-        public static void registerModItems(){
+        public static void registerModItems()
+        {
             E7Spells.E7SPELLS.info("Registering Mod Items for " + E7Spells.MODID);
+
+            Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "zombie_sword"), ZOMBIE_SWORD);
+            Scheduler.registerRegularEvent(15*20, (server) -> {ZombieSwordItem.addChargeToEveryone(server);});
+            ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+                // send packet to set nbt data to player
+                ClientPacketManager.sendPacketToServer(E7Packets.INITIATE_PLAYER_NBT, PacketByteBufs.empty());
+            });
 
             ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(ModItems::addItemsToIngredientItemGroup);
 
