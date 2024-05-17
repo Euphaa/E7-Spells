@@ -3,7 +3,6 @@ package com.e7.spells.item.zombie_tools;
 import com.e7.spells.E7Spells;
 import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
-import com.e7.spells.util.ChargesData;
 import com.e7.spells.util.IEntityDataSaver;
 import com.e7.spells.util.Scheduler;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -51,7 +50,7 @@ public class ZombieSwordItem extends SwordItem
         }
 
         nbt.putInt("zombie_sword_charges", charges);
-        syncChargesNbtWithPlayer((ServerPlayerEntity) player);
+        syncChargesNbtWithPlayer(player);
         // sync the data
         return charges;
     }
@@ -70,29 +69,6 @@ public class ZombieSwordItem extends SwordItem
             addCharge(player);
         }
     }
-
-//    public void addCharge(ItemStack stack)
-//    {
-//        NbtCompound nbt = stack.getNbt();
-//        // c = charges
-//        int c = nbt.getInt("charges");
-//        System.out.println("charges: " + c);
-//        if (c < MAX_CHARGES)
-//        {
-//            nbt.putInt("charges", c+1);
-//            System.out.println("adding charge");
-//        }
-//        c += 1;
-//        if (c < MAX_CHARGES)
-//        {
-//            Scheduler.addTask(15*20, (server) -> {addCharge(stack);});
-//        }
-//        else
-//        {
-//            nbt.putBoolean("charging", false);
-//        }
-//        stack.setNbt(nbt);
-//    }
 
 //    @Override
 //    public ItemStack getDefaultStack()
@@ -117,7 +93,7 @@ public class ZombieSwordItem extends SwordItem
         float ratio = charges/((float)MAX_CHARGES);
         String color;
         if (ratio < .25) color = "§c";
-        else if (ratio < .75) color = "§6";
+        else if (ratio < .75) color = "§e";
         else color = "§a";
         tooltip.add(Text.literal("%s%d§8/§a%d§8 charges left".formatted(color, charges, MAX_CHARGES)));
     }
@@ -147,7 +123,6 @@ public class ZombieSwordItem extends SwordItem
 
         NbtCompound nbt = ((IEntityDataSaver) user).getPersistentData();
         int charges = nbt.getInt("zombie_sword_charges");
-        System.out.println("charges: " + charges);
         if (--charges >= 0)
         {
             user.heal(4f);
@@ -155,8 +130,6 @@ public class ZombieSwordItem extends SwordItem
             ServerPacketManager.sendPacketToClient((ServerPlayerEntity) user, E7Packets.ZOMBIE_SWORD_PARTICLE_ANIMATION, PacketByteBufs.empty());
         }
         syncChargesNbtWithPlayer((ServerPlayerEntity) user);
-
-        // syncThirst(charges, (ServerPlayerEntity) player);
 
         return super.use(world, user, hand);
     }
