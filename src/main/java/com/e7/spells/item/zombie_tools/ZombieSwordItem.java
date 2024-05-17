@@ -26,7 +26,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.world.World;
 
@@ -36,6 +36,10 @@ import java.util.Random;
 public class ZombieSwordItem extends SwordItem
 {
     private static final int MAX_CHARGES = 5;
+    private static final int HEAL_AMOUNT = 4;
+    private static final int ALLY_HEAL_AMOUNT = 2;
+    private static final int HEAL_RANGE = 10;
+
 
     public ZombieSwordItem()
     {
@@ -90,7 +94,9 @@ public class ZombieSwordItem extends SwordItem
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Ability: Instant Heal §e§lRIGHT CLICK"));
-        tooltip.add(Text.literal("§7Heal for §c4 ❤"));
+        tooltip.add(Text.literal(""));
+        tooltip.add(Text.literal("§7Heal yourself for §c%d ❤ §7and".formatted(HEAL_AMOUNT)));
+        tooltip.add(Text.literal("§7others within §e%d blocks §7for §c%d ❤".formatted(HEAL_RANGE, ALLY_HEAL_AMOUNT)));
 
         Entity player = MinecraftClient.getInstance().player;
         if (player == null) return;
@@ -102,6 +108,7 @@ public class ZombieSwordItem extends SwordItem
         else if (ratio < .75) color = "§e";
         else color = "§a";
         tooltip.add(Text.literal("%s%d§8/§a%d§8 charges left".formatted(color, charges, MAX_CHARGES)));
+        tooltip.add(Text.literal(""));
     }
 
 
@@ -133,7 +140,22 @@ public class ZombieSwordItem extends SwordItem
         int charges = nbt.getInt("zombie_sword_charges");
         if (--charges >= 0)
         {
-            user.heal(4f);
+            user.heal(HEAL_AMOUNT);
+
+            BlockPos center = user.getBlockPos();
+            Box BoundingBox = new Box(
+                    center.getX()-HEAL_RANGE,
+                    center.getY()-HEAL_RANGE,
+                    center.getZ()-HEAL_RANGE,
+                    center.getX()+HEAL_RANGE,
+                    center.getY()+HEAL_RANGE,
+                    center.getZ()+HEAL_RANGE
+            );
+            for (PlayerEntity player : world.getEntitiesByClass(PlayerEntity.class, BoundingBox, entity -> true))
+            {
+                player.heal(ALLY_HEAL_AMOUNT);
+            }
+
             nbt.putInt("zombie_sword_charges", charges);
             ServerPacketManager.sendPacketToClient((ServerPlayerEntity) user, E7Packets.ZOMBIE_SWORD_PARTICLE_ANIMATION, PacketByteBufs.empty());
         }

@@ -141,36 +141,6 @@ public class AspectOfTheEndSwordItem extends SwordItem
             }
         }
 
-//        switch (hit.getType())
-//        {
-//            case MISS, ENTITY ->
-//            {
-//                System.out.println("hit an entity or missed");
-//                beforeRound = hit.getPos();
-//                pos = new Vec3d(
-//                        Math.round(beforeRound.getX() - .5) + .5,
-//                        Math.floor(beforeRound.getY()),
-//                        Math.round(beforeRound.getZ() - .5) + .5
-//                );
-//            }
-//            case BLOCK ->
-//            {
-//                System.out.println("hit a block");
-//                BlockHitResult blockHit = (BlockHitResult) hit;
-//                Vec3d blockPos = new Vec3d(
-//                        blockHit.getBlockPos().getX(),
-//                        blockHit.getBlockPos().getY(),
-//                        blockHit.getBlockPos().getZ()
-//                );
-//                Vec3d directionToNudge = hit.getPos().subtract(blockPos);
-//                beforeRound = hit.getPos().add(directionToNudge);
-//                pos = new Vec3d(
-//                        Math.round(beforeRound.getX() + .5) - .5,
-//                        Math.floor(beforeRound.getY())-1,
-//                        Math.round(beforeRound.getZ() + .5) - .5
-//                );
-//            }
-//        }
         if (pos == null) return super.use(world, user, hand);
         // i = number of attempts to find another block above current one
         for (int i = 0; i < 2; i++)
@@ -187,19 +157,6 @@ public class AspectOfTheEndSwordItem extends SwordItem
         E7Packets.packVec3d(buf, pos);
         ClientPacketManager.sendPacketToServer(E7Packets.USE_ASPECT_OF_THE_END, buf);
         System.out.println("sent packet");
-
-
-//        Vec3d startPos = user.getPos();
-//        double yaw = user.getYaw() * (Math.PI / 180.0);
-//        double pitch = -user.getPitch() * (Math.PI / 180.0);
-//        Vec3d direction = new Vec3d(
-//                Math.floor(-Math.sin(yaw)*Math.cos(pitch))+.5f,
-//                Math.floor(Math.sin(pitch)),
-//                Math.floor(Math.cos(yaw)*Math.cos(pitch))+.5f
-//        ).normalize();
-//        Vec3d endPos = startPos.add(direction.multiply(TELEPORT_DISTANCE));
-//        world.raycastBlock(startPos, endPos, new BlockPos(0, 0, 0), , )
-//        user.requestTeleport(endPos.getX(), endPos.getY(), endPos.getZ());
 
         return super.use(world, user, hand);
     }
