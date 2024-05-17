@@ -28,7 +28,7 @@ public class AspectOfTheEndSwordItem extends SwordItem
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext)
     {
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.literal("§6Ability: Instand Transmission §e§lRIGHT CLICK"));
+        tooltip.add(Text.literal("§6Ability: Instant Transmission §e§lRIGHT CLICK"));
         tooltip.add(Text.literal("§7Teleport ahead of you by §e%d blocks".formatted(TELEPORT_DISTANCE)));
     }
 
@@ -42,7 +42,7 @@ public class AspectOfTheEndSwordItem extends SwordItem
         Vec3d direction = new Vec3d(
                 -Math.sin(yaw),
                 Math.sin(pitch),
-                Math.sin(pitch)
+                Math.cos(yaw)
         ).normalize();
         Vec3d endPos = startPos.add(direction.multiply(TELEPORT_DISTANCE));
         user.requestTeleport(endPos.getX(), endPos.getY(), endPos.getZ());
