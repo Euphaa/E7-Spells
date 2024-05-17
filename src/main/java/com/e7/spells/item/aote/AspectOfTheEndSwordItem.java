@@ -53,7 +53,6 @@ public class AspectOfTheEndSwordItem extends SwordItem
 
     public static void doTeleport(ServerPlayerEntity player, Vec3d pos)
     {
-        System.out.println("doing teleport");
         player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
         ServerPacketManager.sendPacketToClient(player, E7Packets.AOTE_PARTICLE_ANIMATION, PacketByteBufs.empty());
         player.getWorld().playSound(
@@ -92,15 +91,14 @@ public class AspectOfTheEndSwordItem extends SwordItem
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Ability: Instant Transmission §e§lRIGHT CLICK"));
         tooltip.add(Text.literal("§7Teleport ahead of you by §e%d blocks".formatted(TELEPORT_DISTANCE)));
+        tooltip.add(Text.literal(""));
     }
 
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
     {
-        System.out.println("use called");
         if (!world.isClient()) return super.use(world, user, hand);
-        System.out.println("starting calculations");
         double maxReach = TELEPORT_DISTANCE; //The farthest target the cameraEntity can detect
         float tickDelta = 1.0F; //Used for tracking animation progress; no tracking is 1.0F
         boolean includeFluids = false; //Whether to detect fluids as blocks
@@ -112,7 +110,6 @@ public class AspectOfTheEndSwordItem extends SwordItem
         {
             case MISS, ENTITY ->
             {
-                System.out.println("hit an entity or missed");
                 beforeRound = hit.getPos();
                 pos = new Vec3d(
                         Math.round(beforeRound.getX() - .5) + .5,
@@ -122,8 +119,6 @@ public class AspectOfTheEndSwordItem extends SwordItem
             }
             case BLOCK ->
             {
-                System.out.println("hit a block");
-//                BlockHitResult blockHit = (BlockHitResult) hit;
                 double yaw = user.getYaw() * (Math.PI / 180.0);
                 double pitch = -user.getPitch() * (Math.PI / 180.0);
 
@@ -145,18 +140,17 @@ public class AspectOfTheEndSwordItem extends SwordItem
         // i = number of attempts to find another block above current one
         for (int i = 0; i < 2; i++)
         {
-            // if the block we are trying to teleport to is not air, then go one above
-            if (!world.getBlockState(new BlockPos(((int) pos.getX()), ((int) pos.getY()), ((int) pos.getZ()))).isAir())
+            BlockState state = world.getBlockState(new BlockPos(((int) pos.getX()), ((int) pos.getY()), ((int) pos.getZ())));
+            // if the block we are trying to teleport to is solid, then go one above
+            if (!state.isAir() && !state.isLiquid())
             {
                 pos = pos.add(0, 1, 0);
             }
             else break;
         }
-        System.out.println("pos:" + pos.toString());
         PacketByteBuf buf = PacketByteBufs.create();
         E7Packets.packVec3d(buf, pos);
         ClientPacketManager.sendPacketToServer(E7Packets.USE_ASPECT_OF_THE_END, buf);
-        System.out.println("sent packet");
 
         return super.use(world, user, hand);
     }
