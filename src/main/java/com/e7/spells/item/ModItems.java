@@ -2,6 +2,7 @@ package com.e7.spells.item;
 
 
 import com.e7.spells.E7Spells;
+import com.e7.spells.item.aote.AspectOfTheEndSwordItem;
 import com.e7.spells.item.zombie_tools.ZombieSwordItem;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.E7Packets;
@@ -23,6 +24,7 @@ public class ModItems {
     public static final Item SMILE = registerItem("smile", new Smile(new FabricItemSettings()));
     public static final Item GUN = registerItem("gun", new Gun(new FabricItemSettings()));
     public static final Item ZOMBIE_SWORD = new ZombieSwordItem();
+    public static final Item ASPECT_OF_THE_END_SWORD = new AspectOfTheEndSwordItem();
 
 
         //Make thing available in creative tabs
@@ -48,6 +50,7 @@ public class ModItems {
                 // send packet to set nbt data to player
                 ClientPacketManager.sendPacketToServer(E7Packets.INITIATE_PLAYER_NBT, PacketByteBufs.empty());
             });
+            Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "aspect_of_the_end_sword"), ASPECT_OF_THE_END_SWORD);
 
             ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(ModItems::addItemsToIngredientItemGroup);
 
