@@ -5,6 +5,8 @@ import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.util.IEntityDataSaver;
 import com.e7.spells.util.Scheduler;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -40,6 +42,7 @@ public class ZombieSwordItem extends SwordItem
         super(ZombieToolMaterial.INSTANCE, 2, -2.4f, new Item.Settings());
     }
 
+
     public static int addCharge(ServerPlayerEntity player) {
         NbtCompound nbt = ((IEntityDataSaver) player).getPersistentData();
         int charges = nbt.getInt("zombie_sword_charges");
@@ -55,12 +58,14 @@ public class ZombieSwordItem extends SwordItem
         return charges;
     }
 
+
     public static void syncChargesNbtWithPlayer(ServerPlayerEntity player)
     {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeInt(((IEntityDataSaver) player).getPersistentData().getInt("zombie_sword_charges"));
         ServerPacketManager.sendPacketToClient(player, E7Packets.SYNC_ZOMBIE_SWORD_CHARGES, buf);
     }
+
 
     public static void addChargeToEveryone(MinecraftServer server)
     {
@@ -80,6 +85,7 @@ public class ZombieSwordItem extends SwordItem
 //        return defaultStack;
 //    }
 
+
     @Override
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         tooltip.add(Text.literal(""));
@@ -98,7 +104,8 @@ public class ZombieSwordItem extends SwordItem
         tooltip.add(Text.literal("%s%d§8/§a%d§8 charges left".formatted(color, charges, MAX_CHARGES)));
     }
 
-    public static void doParticleAnimation(Vec3d pos, MinecraftClient client)
+
+    public static void doParticleAnimation(Vec3d pos)
     {
         Random r = E7Spells.random;
         int s = 1; // particle separation
@@ -107,7 +114,7 @@ public class ZombieSwordItem extends SwordItem
 
         for (int i = 0; i < n; i++)
         {
-            client.particleManager.addParticle(ParticleTypes.HEART,
+            MinecraftClient.getInstance().particleManager.addParticle(ParticleTypes.HEART,
                     r.nextFloat(-1, 1)*s + pos.getX(),
                     r.nextFloat(-1, 1)*s*1.5 + pos.getY(),
                     r.nextFloat(-1, 1)*s + pos.getZ(),
@@ -115,6 +122,7 @@ public class ZombieSwordItem extends SwordItem
             );
         }
     }
+
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)

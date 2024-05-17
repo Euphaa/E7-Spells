@@ -1,8 +1,11 @@
 package com.e7.spells.networking;
 
+import com.e7.spells.item.aote.AspectOfTheEndSwordItem;
 import com.e7.spells.item.zombie_tools.ZombieSwordItem;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.util.IEntityDataSaver;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
@@ -27,7 +30,7 @@ public class ClientPacketManager
 
             Vec3d pos = client.player.getPos();
             client.execute(() -> {
-                ZombieSwordItem.doParticleAnimation(pos, client);
+                ZombieSwordItem.doParticleAnimation(pos);
             });
         });
         ClientPlayNetworking.registerGlobalReceiver(E7Packets.SYNC_ZOMBIE_SWORD_CHARGES,
@@ -36,6 +39,13 @@ public class ClientPacketManager
             int charges = buf.readInt();
             client.execute(() -> {
                 ((IEntityDataSaver) MinecraftClient.getInstance().player).getPersistentData().putInt("zombie_sword_charges", charges);
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(E7Packets.AOTE_PARTICLE_ANIMATION,
+                (client, handler, buf, responseSender) -> {
+
+            client.execute(() -> {
+                AspectOfTheEndSwordItem.doParticleAnimation();
             });
         });
     }

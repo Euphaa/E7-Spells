@@ -7,6 +7,8 @@ import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.util.Scheduler;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -51,8 +53,7 @@ public class E7Spells implements ModInitializer
 		/* register effects */
 		Registry.register(Registries.STATUS_EFFECT, new Identifier(MODID, "ferocity"), FEROCITY);
 		FerocityStatusEffect.registerEffect();
-
-		FabricDefaultAttributeRegistry.register(ModEntites.GOOP, GoopEntity.createGloopAttributes());
+//		FabricDefaultAttributeRegistry.register(ModEntites.GOOP, GoopEntity.createGloopAttributes());
 
 		ModPotions.registerPotions();
 
@@ -60,6 +61,7 @@ public class E7Spells implements ModInitializer
 
 		E7SPELLS.info("Hello Fabric world!");
 	}
+
 
 	public static PlayerEntity getPlayer()
 	{

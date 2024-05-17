@@ -2,6 +2,8 @@ package com.e7.spells;
 
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.E7Packets;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
