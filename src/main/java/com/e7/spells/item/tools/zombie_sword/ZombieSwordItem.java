@@ -4,6 +4,8 @@ import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.util.IEntityDataSaver;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -82,7 +84,7 @@ public class ZombieSwordItem extends SwordItem
 //        return defaultStack;
 //    }
 
-
+    @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
         tooltip.add(Text.literal(""));
@@ -104,7 +106,7 @@ public class ZombieSwordItem extends SwordItem
         tooltip.add(Text.literal(""));
     }
 
-
+    @Environment(EnvType.CLIENT)
     public static void doParticleAnimation(Vec3d pos)
     {
         Random r = E7SpellsCommon.random;

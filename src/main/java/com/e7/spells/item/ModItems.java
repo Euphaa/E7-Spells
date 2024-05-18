@@ -11,7 +11,6 @@ import com.e7.spells.item.tools.hyperion.HyperionSwordItem;
 import com.e7.spells.item.tools.zombie_sword.ZombieSwordItem;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.E7Packets;
-import com.e7.spells.util.Scheduler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
@@ -27,18 +26,18 @@ public class ModItems {
 
     public static final Item SMILE = registerItem("smile", new Smile(new FabricItemSettings()));
     public static final Item GUN = registerItem("gun", new Gun(new FabricItemSettings()));
-    public static final Item ZOMBIE_SWORD = new ZombieSwordItem();
-    public static final Item ASPECT_OF_THE_END_SWORD = new AspectOfTheEndSwordItem();
-    public static final Item HYPERION_SWORD = new HyperionSwordItem();
+    public static final Item ZOMBIE_SWORD = registerItem("zombie_sword", new ZombieSwordItem());
+    public static final Item ASPECT_OF_THE_END_SWORD = registerItem("aspect_of_the_end_sword", new AspectOfTheEndSwordItem());
+    public static final Item HYPERION_SWORD = registerItem("hyperion_sword", new HyperionSwordItem());
     public static final ArmorMaterial STORM_MATERIAL = new StormArmorMaterial();
-    public static final Item STORM_HELMET = new ArmorItem(STORM_MATERIAL, ArmorItem.Type.HELMET, new Item.Settings());
-    public static final Item STORM_CHESTPLATE = new ArmorItem(STORM_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Settings());
-    public static final Item STORM_LEGGINGS = new ArmorItem(STORM_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Settings());
-    public static final Item STORM_BOOTS = new ArmorItem(STORM_MATERIAL, ArmorItem.Type.BOOTS, new Item.Settings());
+    public static final Item STORM_HELMET = registerItem("storm_helmet", new ArmorItem(STORM_MATERIAL, ArmorItem.Type.HELMET, new Item.Settings()));
+    public static final Item STORM_CHESTPLATE = registerItem("storm_chestplate", new ArmorItem(STORM_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Settings()));
+    public static final Item STORM_LEGGINGS = registerItem("storm_leggings", new ArmorItem(STORM_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Settings()));
+    public static final Item STORM_BOOTS = registerItem("storm_boots", new ArmorItem(STORM_MATERIAL, ArmorItem.Type.BOOTS, new Item.Settings()));
 
 
     //Registers the item into the game
-    public static void registerModItems()
+    public static void registerModItemsForClient()
     {
         E7SpellsCommon.E7SPELLS.info("Registering Mod Items for " + E7SpellsCommon.MODID);
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
@@ -46,40 +45,20 @@ public class ModItems {
             ClientPacketManager.sendPacketToServer(E7Packets.INITIATE_PLAYER_NBT, PacketByteBufs.empty());
         });
 
-        /* tools */
-
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "zombie_sword"), ZOMBIE_SWORD);
-        E7SpellsServer.getScheduler().registerRegularEvent(15*20, ZombieSwordItem::addChargeToEveryone);
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "aspect_of_the_end_sword"), ASPECT_OF_THE_END_SWORD);
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "hyperion_sword"), HYPERION_SWORD);
-
-//        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(ModItems::addItemsToIngredientItemGroup);
-
-        /* armor */
-
-//        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "storm_material"), STORM_BOOTS);
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_helmet"), STORM_HELMET);
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_chestplate"), STORM_CHESTPLATE);
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_leggings"), STORM_LEGGINGS);
-        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_boots"), STORM_BOOTS);
-
 
     }
 
+    public static void registerModItemsForServer()
+    {
+        E7SpellsCommon.E7SPELLS.info("Registering Mod Items for " + E7SpellsCommon.MODID);
 
+        E7SpellsServer.getScheduler().registerRegularEvent(15*20, ZombieSwordItem::addChargeToEveryone);
+    }
 
-
-        //Make thing available in creative tabs
-        public static void addItemsToIngredientItemGroup(FabricItemGroupEntries entries) {
-            entries.add(SMILE);
-            entries.add(GUN);
-        }
-
-        //Setting up for all future items
-        private static Item registerItem(String name, Item item)
-        {
-            return Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, name), item);
-        }
+    private static Item registerItem(String name, Item item)
+    {
+        return Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, name), item);
+    }
 
 
 }
