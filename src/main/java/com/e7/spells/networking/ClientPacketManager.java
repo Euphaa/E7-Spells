@@ -1,6 +1,7 @@
 package com.e7.spells.networking;
 
 import com.e7.spells.item.aote.AspectOfTheEndSwordItem;
+import com.e7.spells.item.hyperion.HyperionSwordItem;
 import com.e7.spells.item.zombie_tools.ZombieSwordItem;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.util.IEntityDataSaver;
@@ -44,8 +45,17 @@ public class ClientPacketManager
         ClientPlayNetworking.registerGlobalReceiver(E7Packets.AOTE_PARTICLE_ANIMATION,
                 (client, handler, buf, responseSender) -> {
 
+            Vec3d pos = E7Packets.unpackVec3d(buf);
             client.execute(() -> {
-                AspectOfTheEndSwordItem.doParticleAnimation();
+                AspectOfTheEndSwordItem.doParticleAnimation(pos);
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(E7Packets.HYPERION_PARTICLE_ANIMATION,
+                (client, handler, buf, responseSender) -> {
+
+            Vec3d pos = E7Packets.unpackVec3d(buf);
+            client.execute(() -> {
+                HyperionSwordItem.doParticleAnimation(pos);
             });
         });
     }

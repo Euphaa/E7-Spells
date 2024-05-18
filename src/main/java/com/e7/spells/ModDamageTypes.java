@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 public class ModDamageTypes
 {
-//    public static final RegistryKey<DamageType> FEROCITY_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("e7-spells", "ferocity_damage_type"));
+    public static final RegistryKey<DamageType> MAGIC_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("e7-spells", "magic_damage_type"));
 
 
     public static DamageSource of(World world, RegistryKey<DamageType> key) {
