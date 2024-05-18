@@ -1,7 +1,7 @@
 package com.e7.spells.statuseffects;
 
-import com.e7.spells.E7Spells;
-import com.e7.spells.ModDamageTypes;
+import com.e7.spells.E7SpellsCommon;
+import com.e7.spells.E7SpellsServer;
 import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.util.Scheduler;
@@ -14,7 +14,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,7 +22,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -73,7 +71,7 @@ public class FerocityStatusEffect extends StatusEffect
     private static boolean doesFerocityProc(PlayerEntity attacker, World world, Entity victim)
     {
         if (world.isClient()) return false;
-        if (!attacker.hasStatusEffect(E7Spells.FEROCITY)) return false;
+        if (!attacker.hasStatusEffect(ModStatusEffects.FEROCITY)) return false;
         if (!(victim instanceof LivingEntity)) return false;
         if (((LivingEntity) victim).hurtTime > 0) return false;
         return true;
@@ -82,7 +80,7 @@ public class FerocityStatusEffect extends StatusEffect
     private static boolean doesFerocityProc(PlayerEntity attacker, World world, EnderDragonEntity victim)
     {
         if (world.isClient()) return false;
-        if (!attacker.hasStatusEffect(E7Spells.FEROCITY)) return false;
+        if (!attacker.hasStatusEffect(ModStatusEffects.FEROCITY)) return false;
         if (victim.hurtTime > 0) return false;
         return true;
     }
@@ -90,7 +88,7 @@ public class FerocityStatusEffect extends StatusEffect
     private static void procFerocity(PlayerEntity attacker, World world, Entity victim)
     {
         float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
-        int ferocityLevel = attacker.getStatusEffect(E7Spells.FEROCITY).getAmplifier() + 1;
+        int ferocityLevel = attacker.getStatusEffect(ModStatusEffects.FEROCITY).getAmplifier() + 1;
         int guarenteedProcs = Math.floorDiv(ferocityLevel, 2);
         if (ferocityLevel % 2 == 1 && new Random().nextInt(2) == 1) guarenteedProcs++;
         Vec3d direction = attacker.getPos().subtract(victim.getPos()).normalize();
@@ -98,7 +96,7 @@ public class FerocityStatusEffect extends StatusEffect
 
         for (int i = 1; i <= guarenteedProcs; i++)
         {
-            Scheduler.addTask(i * FEROCITY_HIT_DELAY + 1, (server) -> {
+            E7SpellsServer.getScheduler().addTask(i * FEROCITY_HIT_DELAY + 1, (server) -> {
                 doFerocitySwipe(attacker, world, victim, direction, damage, knockback);
             });
         }

@@ -1,9 +1,10 @@
 package com.e7.spells.networking;
 
-import com.e7.spells.E7Spells;
+import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.item.tools.aote.AspectOfTheEndSwordItem;
 import com.e7.spells.item.tools.hyperion.HyperionSwordItem;
 import com.e7.spells.item.tools.zombie_sword.ZombieSwordItem;
+import com.e7.spells.statuseffects.ModStatusEffects;
 import com.e7.spells.util.IEntityDataSaver;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -29,7 +30,7 @@ public class ServerPacketManager
         ServerPlayNetworking.registerGlobalReceiver(E7Packets.FEROCITY_KEY_ACTIVATION, ((server, player, handler, buf, responseSender) -> {
 
             server.execute(() -> {
-                player.addStatusEffect(new StatusEffectInstance(E7Spells.FEROCITY, 10*20, 2));
+                player.addStatusEffect(new StatusEffectInstance(ModStatusEffects.FEROCITY, 10*20, 2));
             });
         }));
         ServerPlayNetworking.registerGlobalReceiver(E7Packets.INITIATE_PLAYER_NBT, ((server, player, handler, buf, responseSender) -> {

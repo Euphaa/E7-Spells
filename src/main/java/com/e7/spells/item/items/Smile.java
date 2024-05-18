@@ -1,6 +1,7 @@
 package com.e7.spells.item.items;
 
-import com.e7.spells.E7Spells;
+import com.e7.spells.E7SpellsCommon;
+import com.e7.spells.statuseffects.ModStatusEffects;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -21,7 +22,7 @@ public class Smile extends Item {
 
             if (hand == Hand.MAIN_HAND) {
 
-                player.addStatusEffect (new StatusEffectInstance(E7Spells.FEROCITY, 10*20, 1));
+                player.addStatusEffect (new StatusEffectInstance(ModStatusEffects.FEROCITY, 10*20, 1));
 
                 //player.getStackInHand(hand).decrement(1);
             }

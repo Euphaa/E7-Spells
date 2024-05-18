@@ -1,7 +1,8 @@
 package com.e7.spells.item;
 
 
-import com.e7.spells.E7Spells;
+import com.e7.spells.E7SpellsCommon;
+import com.e7.spells.E7SpellsServer;
 import com.e7.spells.item.armor.storm.StormArmorMaterial;
 import com.e7.spells.item.items.Gun;
 import com.e7.spells.item.items.Smile;
@@ -14,13 +15,10 @@ import com.e7.spells.util.Scheduler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -42,7 +40,7 @@ public class ModItems {
     //Registers the item into the game
     public static void registerModItems()
     {
-        E7Spells.E7SPELLS.info("Registering Mod Items for " + E7Spells.MODID);
+        E7SpellsCommon.E7SPELLS.info("Registering Mod Items for " + E7SpellsCommon.MODID);
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             // send packet to set nbt data to player
             ClientPacketManager.sendPacketToServer(E7Packets.INITIATE_PLAYER_NBT, PacketByteBufs.empty());
@@ -50,20 +48,20 @@ public class ModItems {
 
         /* tools */
 
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "zombie_sword"), ZOMBIE_SWORD);
-        Scheduler.registerRegularEvent(15*20, ZombieSwordItem::addChargeToEveryone);
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "aspect_of_the_end_sword"), ASPECT_OF_THE_END_SWORD);
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "hyperion_sword"), HYPERION_SWORD);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "zombie_sword"), ZOMBIE_SWORD);
+        E7SpellsServer.getScheduler().registerRegularEvent(15*20, ZombieSwordItem::addChargeToEveryone);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "aspect_of_the_end_sword"), ASPECT_OF_THE_END_SWORD);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "hyperion_sword"), HYPERION_SWORD);
 
 //        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(ModItems::addItemsToIngredientItemGroup);
 
         /* armor */
 
 //        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "storm_material"), STORM_BOOTS);
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "storm_helmet"), STORM_HELMET);
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "storm_chestplate"), STORM_CHESTPLATE);
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "storm_leggings"), STORM_LEGGINGS);
-        Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, "storm_boots"), STORM_BOOTS);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_helmet"), STORM_HELMET);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_chestplate"), STORM_CHESTPLATE);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_leggings"), STORM_LEGGINGS);
+        Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, "storm_boots"), STORM_BOOTS);
 
 
     }
@@ -80,7 +78,7 @@ public class ModItems {
         //Setting up for all future items
         private static Item registerItem(String name, Item item)
         {
-            return Registry.register(Registries.ITEM, new Identifier(E7Spells.MODID, name), item);
+            return Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, name), item);
         }
 
 

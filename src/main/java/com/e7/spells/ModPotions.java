@@ -1,8 +1,8 @@
 package com.e7.spells;
 
 import com.e7.spells.item.ModItems;
+import com.e7.spells.statuseffects.ModStatusEffects;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
@@ -21,17 +21,17 @@ public class ModPotions
     public static void registerPotions()
     {
         EXAMPLE_POTION =
-                Registry.register(Registries.POTION, new Identifier(E7Spells.MODID, "ferocity_potion_0"),
-                        new Potion(new StatusEffectInstance(E7Spells.FEROCITY, 3600, 0)));
+                Registry.register(Registries.POTION, new Identifier(E7SpellsCommon.MODID, "ferocity_potion_0"),
+                        new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 3600, 0)));
         LONG_EXAMPLE_POTION =
                 Registry.register(Registries.POTION, new Identifier("e7-spells", "long_ferocity_potion_0"),
-                        new Potion(new StatusEffectInstance(E7Spells.FEROCITY, 9600, 0)));
+                        new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 9600, 0)));
         EXAMPLE_POTION_2 =
                 Registry.register(Registries.POTION, new Identifier("e7-spells", "ferocity_potion_1"),
-                        new Potion(new StatusEffectInstance(E7Spells.FEROCITY, 2400, 1)));
+                        new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 2400, 1)));
         EXAMPLE_POTION_3 =
                 Registry.register(Registries.POTION, new Identifier("e7-spells", "ferocity_potion_2"),
-                        new Potion(new StatusEffectInstance(E7Spells.FEROCITY, 1800, 2)));
+                        new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 1800, 2)));
         registerPotionsRecipes();
     }
 

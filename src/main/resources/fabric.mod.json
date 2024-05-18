@@ -17,7 +17,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.e7.spells.E7Spells"
+          "com.e7.spells.E7SpellsCommon"
 		],
 		"fabric-datagen": [
 			"com.e7.spells.E7SpellsDataGenerator"

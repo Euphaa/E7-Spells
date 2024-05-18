@@ -1,6 +1,6 @@
 package com.e7.spells.item.tools.aote;
 
-import com.e7.spells.E7Spells;
+import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
@@ -61,7 +61,7 @@ public class AspectOfTheEndSwordItem extends SwordItem
 
     public static void doParticleAnimation(Vec3d pos)
     {
-        Random r = E7Spells.random;
+        Random r = E7SpellsCommon.random;
         int s = 1; // particle separation
         int n = 15; // number of particles
         pos = pos.add(0, .5, 0);
