@@ -1,12 +1,9 @@
-package com.e7.spells.item.zombie_tools;
+package com.e7.spells.item.tools.zombie_sword;
 
 import com.e7.spells.E7Spells;
 import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.util.IEntityDataSaver;
-import com.e7.spells.util.Scheduler;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -14,7 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -22,12 +18,9 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.world.World;
 
 import java.util.List;

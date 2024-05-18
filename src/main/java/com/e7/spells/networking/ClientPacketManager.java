@@ -1,12 +1,10 @@
 package com.e7.spells.networking;
 
-import com.e7.spells.item.aote.AspectOfTheEndSwordItem;
-import com.e7.spells.item.hyperion.HyperionSwordItem;
-import com.e7.spells.item.zombie_tools.ZombieSwordItem;
+import com.e7.spells.item.tools.aote.AspectOfTheEndSwordItem;
+import com.e7.spells.item.tools.hyperion.HyperionSwordItem;
+import com.e7.spells.item.tools.zombie_sword.ZombieSwordItem;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.util.IEntityDataSaver;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;

@@ -1,9 +1,9 @@
 package com.e7.spells.networking;
 
 import com.e7.spells.E7Spells;
-import com.e7.spells.item.aote.AspectOfTheEndSwordItem;
-import com.e7.spells.item.hyperion.HyperionSwordItem;
-import com.e7.spells.item.zombie_tools.ZombieSwordItem;
+import com.e7.spells.item.tools.aote.AspectOfTheEndSwordItem;
+import com.e7.spells.item.tools.hyperion.HyperionSwordItem;
+import com.e7.spells.item.tools.zombie_sword.ZombieSwordItem;
 import com.e7.spells.util.IEntityDataSaver;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;

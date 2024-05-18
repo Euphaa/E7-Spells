@@ -1,4 +1,4 @@
-package com.e7.spells.item.hyperion;
+package com.e7.spells.item.tools.hyperion;
 
 import com.e7.spells.E7Spells;
 import com.e7.spells.ModDamageTypes;
@@ -47,7 +47,37 @@ public class HyperionSwordItem extends SwordItem
 
     public static void doWitherImpact(ServerPlayerEntity user, Vec3d pos)
     {
-        user.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+//        ItemStack hyperion = user.getMainHandStack();
+//        if (hyperion.getNbt().getBoolean("has_shadow_warp")) doShadowWarp(user, pos);
+//        if (hyperion.getNbt().getBoolean("has_implosion")) doImplosion(user, pos);
+//        if (hyperion.getNbt().getBoolean("has_wither_shield")) doWitherShield(user, pos);
+        doShadowWarp(user, pos);
+        doImplosion(user, pos);
+        doWitherShield(user, pos);
+    }
+
+    private static void doWitherShield(ServerPlayerEntity user, Vec3d pos)
+    {
+        user.heal(2);
+        user.getWorld().playSound(
+                null, // Player - if non-null, will play sound for every nearby player *except* the specified player
+                pos.getX(), pos.getY(), pos.getZ(), // The position of where the sound will come from
+                SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE, // The sound that will play
+                SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
+                .8f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
+                1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
+        );
+        PacketByteBuf buf = PacketByteBufs.create();
+        E7Packets.packVec3d(buf, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+        for (ServerPlayerEntity player : PlayerLookup.tracking(user))
+        {
+            ServerPacketManager.sendPacketToClient(player, E7Packets.AOTE_PARTICLE_ANIMATION, buf);
+        }
+        ServerPacketManager.sendPacketToClient(user, E7Packets.AOTE_PARTICLE_ANIMATION, buf);
+    }
+
+    private static void doImplosion(ServerPlayerEntity user, Vec3d pos)
+    {
         BlockPos center = user.getBlockPos();
         Box BoundingBox = new Box(
                 center.getX()- IMPLOSION_RANGE,
@@ -79,14 +109,12 @@ public class HyperionSwordItem extends SwordItem
                 .8f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
                 1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
         );
-        user.getWorld().playSound(
-                null, // Player - if non-null, will play sound for every nearby player *except* the specified player
-                pos.getX(), pos.getY(), pos.getZ(), // The position of where the sound will come from
-                SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE, // The sound that will play
-                SoundCategory.PLAYERS, // This determines which of the volume sliders affect this sound
-                .8f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
-                1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
-        );
+    }
+
+    private static void doShadowWarp(ServerPlayerEntity user, Vec3d pos)
+    {
+        user.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+        user.fallDistance = 0;
     }
 
     public static void doParticleAnimation(Vec3d pos)
@@ -120,9 +148,9 @@ public class HyperionSwordItem extends SwordItem
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Item Ability: Wither Impact §e§lRIGHT CLICK"));
         tooltip.add(Text.literal("§7Teleports §e%d blocks §7ahead of you. Then implode".formatted(TELEPORT_DISTANCE)));
-        tooltip.add(Text.literal("§7dealing §412 damage to nearby enemies.".formatted(TELEPORT_DISTANCE)));
-        tooltip.add(Text.literal("§7tAlso applies the wither shield "));
-        tooltip.add(Text.literal("§7scroll ability granting §c+%d ❤".formatted(HEALING_AMOUNT)));
+        tooltip.add(Text.literal("§7dealing §4%d damage §7to nearby enemies.".formatted(IMPLOSION_DAMAGE_MULTIPLIER)));
+        tooltip.add(Text.literal("§7Also applies the wither shield "));
+        tooltip.add(Text.literal("§7scroll ability granting §c+%d ❤§7.".formatted(HEALING_AMOUNT)));
         tooltip.add(Text.literal(""));
     }
 

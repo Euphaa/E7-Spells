@@ -1,26 +1,18 @@
-package com.e7.spells.item.aote;
+package com.e7.spells.item.tools.aote;
 
 import com.e7.spells.E7Spells;
-import com.e7.spells.item.zombie_tools.ZombieToolMaterial;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolMaterial;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,19 +21,13 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class AspectOfTheEndSwordItem extends SwordItem
 {
@@ -55,6 +41,7 @@ public class AspectOfTheEndSwordItem extends SwordItem
     public static void doTeleport(ServerPlayerEntity user, Vec3d pos)
     {
         user.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+        user.fallDistance = 0;
         PacketByteBuf buf = PacketByteBufs.create();
         E7Packets.packVec3d(buf, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
         for (PlayerEntity player : PlayerLookup.tracking(user))

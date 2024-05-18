@@ -1,6 +1,6 @@
-package com.e7.spells.item.aote;
+package com.e7.spells.item.tools.aote;
 
-import com.e7.spells.item.zombie_tools.ZombieToolMaterial;
+import com.e7.spells.item.tools.zombie_sword.ZombieToolMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;

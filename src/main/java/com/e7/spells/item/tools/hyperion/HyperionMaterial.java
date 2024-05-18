@@ -1,16 +1,17 @@
-package com.e7.spells.item.zombie_tools;
+package com.e7.spells.item.tools.hyperion;
 
+import com.e7.spells.item.tools.zombie_sword.ZombieToolMaterial;
 import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 
-public class ZombieToolMaterial implements ToolMaterial
+public class HyperionMaterial implements ToolMaterial
 {
     public static final ZombieToolMaterial INSTANCE = new ZombieToolMaterial();
 
     @Override
     public int getDurability() {
-        return 500;
+        return 1400;
     }
 
     @Override
@@ -20,7 +21,7 @@ public class ZombieToolMaterial implements ToolMaterial
 
     @Override
     public float getAttackDamage() {
-        return 3F;
+        return 6F;
     }
 
     @Override
@@ -30,13 +31,11 @@ public class ZombieToolMaterial implements ToolMaterial
 
     @Override
     public int getEnchantability() {
-        return 12;
+        return 18;
     }
 
     @Override
     public Ingredient getRepairIngredient() {
-        return Ingredient.ofItems(Items.ROTTEN_FLESH);
+        return Ingredient.ofItems(Items.STICK);
     }
-
-
 }

@@ -1,4 +1,4 @@
-package com.e7.spells.item;
+package com.e7.spells.item.items;
 
 import com.e7.spells.E7Spells;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -9,19 +9,19 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class Gun extends Item {
 
-    public Gun(Settings settings) {
+public class Smile extends Item {
+
+    public Smile(Settings settings) {
         super(settings);
     }
-
 
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient){
 
             if (hand == Hand.MAIN_HAND) {
 
-                player.kill();
+                player.addStatusEffect (new StatusEffectInstance(E7Spells.FEROCITY, 10*20, 1));
 
                 //player.getStackInHand(hand).decrement(1);
             }
