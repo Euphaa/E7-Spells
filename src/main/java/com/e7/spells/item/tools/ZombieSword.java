@@ -3,10 +3,11 @@ package com.e7.spells.item.tools;
 import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.networking.payloads.ZombieSwordParticleAnimationPacket;
+import com.e7.spells.util.CCAComponents;
 import com.e7.spells.util.IEntityDataSaver;
+import com.e7.spells.util.PlayerNbtComponent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipType;
 import net.minecraft.entity.Entity;
@@ -14,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,44 +27,36 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class ZombieSwordItem extends WeaponItem
+public class ZombieSword extends WeaponItem
 {
     public static final ToolMaterial MATERIAL = ModToolMaterials.ZOMBIE;
     public static final int ATTACK_DAMAGE = 2;
     public static final float ATTACK_SPEED = -2.4f;
     private static final int MAX_CHARGES = 5;
+    private static final int MANA_COST = 70;
     private static final int HEAL_AMOUNT = 4;
     private static final int ALLY_HEAL_AMOUNT = 2;
     private static final int HEAL_RANGE = 10;
 
-    public ZombieSwordItem()
+    public ZombieSword()
     {
         super(MATERIAL, new Settings().attributeModifiers(WeaponItem.createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
     }
 
 
     public static int addCharge(ServerPlayerEntity player) {
-        NbtCompound nbt = ((IEntityDataSaver) player).getPersistentData();
-        int charges = nbt.getInt("zombie_sword_charges");
-        if(charges + 1 >= MAX_CHARGES) {
-            charges = MAX_CHARGES;
-        } else {
-            charges += 1;
+        int charges = CCAComponents.PLAYER_NBT.get(player).getZombie_sword_charges();
+        if (charges + 1 >= MAX_CHARGES)
+        {
+            CCAComponents.PLAYER_NBT.get(player).setZombie_sword_charges(MAX_CHARGES);
         }
-
-        nbt.putInt("zombie_sword_charges", charges);
-        syncChargesNbtWithPlayer(player);
-        // sync the data
+        else
+        {
+            CCAComponents.PLAYER_NBT.get(player).incrementZombie_sword_charges(1);
+        }
         return charges;
     }
 
-
-    public static void syncChargesNbtWithPlayer(ServerPlayerEntity player)
-    {
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeInt(((IEntityDataSaver) player).getPersistentData().getInt("zombie_sword_charges"));
-//        ServerPacketManager.sendPacketToClient(player, E7Packets.SYNC_ZOMBIE_SWORD_CHARGES, buf);
-    }
 
 
     public static void addChargeToEveryone(MinecraftServer server)
@@ -98,7 +90,7 @@ public class ZombieSwordItem extends WeaponItem
         Entity player = MinecraftClient.getInstance().player;
         if (player == null) return;
         NbtCompound nbt = ((IEntityDataSaver) player).getPersistentData();
-        int charges = nbt.getInt("zombie_sword_charges");
+        int charges = CCAComponents.PLAYER_NBT.get(player).getZombie_sword_charges();
         float ratio = charges/((float)MAX_CHARGES);
         String color;
         if (ratio < .25) color = "§c";
@@ -135,10 +127,12 @@ public class ZombieSwordItem extends WeaponItem
     {
         if (world.isClient()) return super.use(world, user, hand);
 
-        NbtCompound nbt = ((IEntityDataSaver) user).getPersistentData();
-        int charges = nbt.getInt("zombie_sword_charges");
-        if (--charges >= 0)
+        PlayerNbtComponent userData = CCAComponents.PLAYER_NBT.get(user);
+        if (userData.getZombie_sword_charges() > 0 && userData.getMana() >= MANA_COST)
         {
+            userData.incrementMana(-MANA_COST);
+            userData.incrementZombie_sword_charges(-1);
+
             user.heal(HEAL_AMOUNT);
 
             BlockPos center = user.getBlockPos();
@@ -155,10 +149,9 @@ public class ZombieSwordItem extends WeaponItem
                 player.heal(ALLY_HEAL_AMOUNT);
             }
 
-            nbt.putInt("zombie_sword_charges", charges);
             ServerPacketManager.sendPacketToClient((ServerPlayerEntity) user, new ZombieSwordParticleAnimationPacket(user.getPos()));
         }
-        syncChargesNbtWithPlayer((ServerPlayerEntity) user);
+
 
         return super.use(world, user, hand);
     }

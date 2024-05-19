@@ -19,8 +19,14 @@
 		"main": [
           "com.e7.spells.E7SpellsCommon"
 		],
+		"client": [
+          "com.e7.spells.E7SpellsClient"
+		],
 		"fabric-datagen": [
 			"com.e7.spells.E7SpellsDataGenerator"
+		],
+		"cardinal-components": [
+			"com.e7.spells.util.CCAComponents"
 		]
 	},
 	"mixins": [
@@ -34,5 +40,10 @@
 	},
 	"suggests": {
 		"another-mod": "*"
+	},
+	"custom": {
+		"cardinal-components": [
+			"e7-spells:player_nbt"
+		]
 	}
 }

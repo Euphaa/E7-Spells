@@ -1,6 +1,6 @@
 package com.e7.spells.statuseffects;
 
-import com.e7.spells.E7SpellsServer;
+import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.networking.payloads.FerocityParticleAnimationPacket;
 import net.fabricmc.api.EnvType;
@@ -96,7 +96,7 @@ public class FerocityStatusEffect extends StatusEffect
 
         for (int i = 1; i <= guarenteedProcs; i++)
         {
-            E7SpellsServer.getScheduler().addTask(i * FEROCITY_HIT_DELAY + 1, (server) -> {
+            E7SpellsCommon.getScheduler().addTask(i * FEROCITY_HIT_DELAY + 1, (server) -> {
                 doFerocitySwipe(attacker, world, victim, direction, damage, knockback);
             });
         }

@@ -7,6 +7,7 @@ import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
 import com.e7.spells.networking.payloads.HyperionParticleAnimationPacket;
 import com.e7.spells.networking.payloads.UseHyperionPacket;
+import com.e7.spells.util.CCAComponents;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -35,17 +36,18 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class HyperionSwordItem extends WeaponItem
+public class Hyperion extends WeaponItem
 {
     public static final ToolMaterial MATERIAL = ModToolMaterials.NECRON;
     public static final int ATTACK_DAMAGE = 2;
     public static final float ATTACK_SPEED = -2f;
+    public static final int MANA_COST = 150;
     public static final int TELEPORT_DISTANCE = 10;
     public static final int IMPLOSION_RANGE = 7;
     public static final int IMPLOSION_DAMAGE_MULTIPLIER = 16;
     private static final int HEALING_AMOUNT = 2;
 
-    public HyperionSwordItem()
+    public Hyperion()
     {
         super(MATERIAL, new Settings().attributeModifiers(createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
     }
@@ -57,9 +59,13 @@ public class HyperionSwordItem extends WeaponItem
 //        if (hyperion.getNbt().getBoolean("has_shadow_warp")) doShadowWarp(user, pos);
 //        if (hyperion.getNbt().getBoolean("has_implosion")) doImplosion(user, pos);
 //        if (hyperion.getNbt().getBoolean("has_wither_shield")) doWitherShield(user, pos);
-        doShadowWarp(user, pos);
-        doImplosion(user, pos);
-        doWitherShield(user, pos);
+        if (CCAComponents.PLAYER_NBT.get(user).subtractAbilityCost(MANA_COST))
+        {
+            doShadowWarp(user, pos);
+            doImplosion(user, pos);
+            doWitherShield(user, pos);
+        }
+
     }
 
     private static void doWitherShield(ServerPlayerEntity user, Vec3d pos)

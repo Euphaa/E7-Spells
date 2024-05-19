@@ -1,8 +1,8 @@
 package com.e7.spells.networking;
 
-import com.e7.spells.item.tools.AspectOfTheEndSwordItem;
-import com.e7.spells.item.tools.HyperionSwordItem;
-import com.e7.spells.item.tools.ZombieSwordItem;
+import com.e7.spells.item.tools.AspectOfTheEnd;
+import com.e7.spells.item.tools.Hyperion;
+import com.e7.spells.item.tools.ZombieSword;
 import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
 import com.e7.spells.networking.payloads.FerocityParticleAnimationPacket;
 import com.e7.spells.networking.payloads.HyperionParticleAnimationPacket;
@@ -22,7 +22,7 @@ public class ClientPacketManager
         });
         ClientPlayNetworking.registerGlobalReceiver(ZombieSwordParticleAnimationPacket.ID, (payload, context) -> {
 
-            ZombieSwordItem.doParticleAnimation(payload.vec());
+            ZombieSword.doParticleAnimation(payload.vec());
         });
 //        ClientPlayNetworking.registerGlobalReceiver(E7Packets.SYNC_ZOMBIE_SWORD_CHARGES,
 //                (client, handler, buf, responseSender) -> {
@@ -32,11 +32,11 @@ public class ClientPacketManager
 //        });
         ClientPlayNetworking.registerGlobalReceiver(AoteParticleAnimationPacket.ID, (payload, context) -> {
 
-            AspectOfTheEndSwordItem.doParticleAnimation(payload.vec());
+            AspectOfTheEnd.doParticleAnimation(payload.vec());
         });
         ClientPlayNetworking.registerGlobalReceiver(HyperionParticleAnimationPacket.ID, (payload, context) -> {
 
-            HyperionSwordItem.doParticleAnimation(payload.vec());
+            Hyperion.doParticleAnimation(payload.vec());
         });
     }
 

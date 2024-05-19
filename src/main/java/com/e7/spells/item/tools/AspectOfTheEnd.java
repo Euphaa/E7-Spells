@@ -27,13 +27,13 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class AspectOfTheEndSwordItem extends WeaponItem
+public class AspectOfTheEnd extends WeaponItem
 {
     public static final ToolMaterial MATERIAL = ModToolMaterials.END;
     public static final int ATTACK_DAMAGE = 2;
     public static final float ATTACK_SPEED = -2.4f;
     public static final int TELEPORT_DISTANCE = 12;
-    public AspectOfTheEndSwordItem()
+    public AspectOfTheEnd()
     {
         super(MATERIAL, new Settings().attributeModifiers(createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
     }

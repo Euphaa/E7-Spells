@@ -21,6 +21,10 @@ repositories {
 		name = "Ladysnake Mods"
 		url = 'https://maven.ladysnake.org/releases'
 	}
+	maven {
+		name = "Jitpack"
+		url = "https://jitpack.io"
+	}
 }
 
 fabricApi {
