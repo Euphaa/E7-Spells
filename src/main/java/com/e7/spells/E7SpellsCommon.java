@@ -19,12 +19,12 @@ public class E7SpellsCommon implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
+		new E7SpellsServer().onInitializeServer();
+
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
 		{
 			new E7SpellsClient().onInitializeClient();
 		}
-
-		new E7SpellsServer().onInitializeServer();
 	}
 
 }

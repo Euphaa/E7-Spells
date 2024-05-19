@@ -2,8 +2,6 @@ package com.e7.spells;
 
 import com.e7.spells.item.ModItems;
 import com.e7.spells.networking.ClientPacketManager;
-import com.e7.spells.statuseffects.ModStatusEffects;
-import com.e7.spells.util.Scheduler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,8 +18,6 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class E7SpellsClient implements ClientModInitializer
 {
-//    public static E7SpellsClient client;
-
     public static final ItemGroup ITEM_GROUP = Registry.register(
             Registries.ITEM_GROUP,
             new Identifier(E7SpellsCommon.MODID, "item_group"),

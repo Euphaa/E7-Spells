@@ -8,11 +8,10 @@ import net.minecraft.util.Identifier;
 
 public class ModStatusEffects
 {
-    public static final StatusEffect FEROCITY = new FerocityStatusEffect();
+    public static final StatusEffect FEROCITY = Registry.register(Registries.STATUS_EFFECT, new Identifier(E7SpellsCommon.MODID, "ferocity"), new FerocityStatusEffect());
 
     public static void registerEffects()
     {
-        Registry.register(Registries.STATUS_EFFECT, new Identifier(E7SpellsCommon.MODID, "ferocity"), FEROCITY);
-        FerocityStatusEffect.registerEffect();
+
     }
 }

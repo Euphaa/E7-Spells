@@ -1,12 +1,11 @@
 package com.e7.spells.statuseffects;
 
-import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.E7SpellsServer;
-import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
-import com.e7.spells.util.Scheduler;
+import com.e7.spells.networking.payloads.FerocityParticleAnimationPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
@@ -17,8 +16,9 @@ import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -48,11 +48,11 @@ public class FerocityStatusEffect extends StatusEffect
         return true;
     }
 
-    // This method is called when it applies the status effect. We implement custom functionality here.
+    // This method is called when it applies the status effect. implement custom functionality here.
     @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier)
+    public boolean applyUpdateEffect(LivingEntity entity, int amplifier)
     {
-
+        return super.applyUpdateEffect(entity, amplifier);
     }
 
     public static void registerEffect()
@@ -71,7 +71,7 @@ public class FerocityStatusEffect extends StatusEffect
     private static boolean doesFerocityProc(PlayerEntity attacker, World world, Entity victim)
     {
         if (world.isClient()) return false;
-        if (!attacker.hasStatusEffect(ModStatusEffects.FEROCITY)) return false;
+        if (!attacker.hasStatusEffect(RegistryEntry.of(ModStatusEffects.FEROCITY))) return false;
         if (!(victim instanceof LivingEntity)) return false;
         if (((LivingEntity) victim).hurtTime > 0) return false;
         return true;
@@ -80,7 +80,7 @@ public class FerocityStatusEffect extends StatusEffect
     private static boolean doesFerocityProc(PlayerEntity attacker, World world, EnderDragonEntity victim)
     {
         if (world.isClient()) return false;
-        if (!attacker.hasStatusEffect(ModStatusEffects.FEROCITY)) return false;
+        if (!attacker.hasStatusEffect(RegistryEntry.of(ModStatusEffects.FEROCITY))) return false;
         if (victim.hurtTime > 0) return false;
         return true;
     }
@@ -88,7 +88,7 @@ public class FerocityStatusEffect extends StatusEffect
     private static void procFerocity(PlayerEntity attacker, World world, Entity victim)
     {
         float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
-        int ferocityLevel = attacker.getStatusEffect(ModStatusEffects.FEROCITY).getAmplifier() + 1;
+        int ferocityLevel = attacker.getStatusEffect(RegistryEntry.of(ModStatusEffects.FEROCITY)).getAmplifier() + 1;
         int guarenteedProcs = Math.floorDiv(ferocityLevel, 2);
         if (ferocityLevel % 2 == 1 && new Random().nextInt(2) == 1) guarenteedProcs++;
         Vec3d direction = attacker.getPos().subtract(victim.getPos()).normalize();
@@ -107,18 +107,13 @@ public class FerocityStatusEffect extends StatusEffect
     private static void doFerocitySwipe(PlayerEntity attacker, World world, Entity victim, Vec3d direction, float damage, float knockback)
     {
         if (!victim.isAlive()) return;
-//        victim.damage(ModDamageTypes.of(world, ModDamageTypes.FEROCITY_DAMAGE_TYPE), damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
-//        victim.damage(, damage * (FEROCITY_DAMAGE_MULTIPLIER + 1));
         victim.damage(attacker.getDamageSources().playerAttack(attacker), damage * FEROCITY_DAMAGE_MULTIPLIER);
         ((LivingEntity) victim).takeKnockback(knockback * FEROCITY_KNOCKBACK_MULTIPLIER, direction.getX(), direction.getZ());
 
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeDouble(victim.getX());
-        buf.writeDouble(victim.getY());
-        buf.writeDouble(victim.getZ());
+        CustomPayload p = new FerocityParticleAnimationPacket(victim.getPos());
         for (ServerPlayerEntity player : PlayerLookup.tracking(victim))
         {
-            ServerPacketManager.sendPacketToClient(player, E7Packets.FEROCITY_PARTICLE_ANIMATION, buf);
+            ServerPacketManager.sendPacketToClient(player, p);
         }
 
         world.playSound(
@@ -139,18 +134,12 @@ public class FerocityStatusEffect extends StatusEffect
         );
     }
 
-
-    public static void createFerocityParticles(MinecraftClient client, Vec3d pos)
+    @Environment(EnvType.CLIENT)
+    public static void createFerocityParticles(Vec3d pos)
     {
-        client.particleManager.addParticle(ParticleTypes.SWEEP_ATTACK,
+        MinecraftClient.getInstance().particleManager.addParticle(ParticleTypes.SWEEP_ATTACK,
                 pos.getX(), pos.getY(), pos.getZ(),
                 0, 0, 0
         );
     }
-
-//    @Override
-//    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, NbtCompound additionalData)
-//    {
-//
-//    }
 }

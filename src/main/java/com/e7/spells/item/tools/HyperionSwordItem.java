@@ -1,21 +1,24 @@
-package com.e7.spells.item.tools.hyperion;
+package com.e7.spells.item.tools;
 
 import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.ModDamageTypes;
 import com.e7.spells.networking.ClientPacketManager;
-import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
+import com.e7.spells.networking.payloads.HyperionParticleAnimationPacket;
+import com.e7.spells.networking.payloads.UseHyperionPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.item.ToolMaterial;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -32,8 +35,11 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class HyperionSwordItem extends SwordItem
+public class HyperionSwordItem extends WeaponItem
 {
+    public static final ToolMaterial MATERIAL = ModToolMaterials.NECRON;
+    public static final int ATTACK_DAMAGE = 2;
+    public static final float ATTACK_SPEED = -2f;
     public static final int TELEPORT_DISTANCE = 10;
     public static final int IMPLOSION_RANGE = 7;
     public static final int IMPLOSION_DAMAGE_MULTIPLIER = 16;
@@ -41,7 +47,7 @@ public class HyperionSwordItem extends SwordItem
 
     public HyperionSwordItem()
     {
-        super(HyperionMaterial.INSTANCE, 2, -2f, new Settings());
+        super(MATERIAL, new Settings().attributeModifiers(createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
     }
 
 
@@ -67,13 +73,12 @@ public class HyperionSwordItem extends SwordItem
                 .8f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
                 1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
         );
-        PacketByteBuf buf = PacketByteBufs.create();
-        E7Packets.packVec3d(buf, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+        CustomPayload p = new AoteParticleAnimationPacket(pos);
         for (ServerPlayerEntity player : PlayerLookup.tracking(user))
         {
-            ServerPacketManager.sendPacketToClient(player, E7Packets.AOTE_PARTICLE_ANIMATION, buf);
+            ServerPacketManager.sendPacketToClient(player, p);
         }
-        ServerPacketManager.sendPacketToClient(user, E7Packets.AOTE_PARTICLE_ANIMATION, buf);
+        ServerPacketManager.sendPacketToClient(user, p);
     }
 
     private static void doImplosion(ServerPlayerEntity user, Vec3d pos)
@@ -93,13 +98,12 @@ public class HyperionSwordItem extends SwordItem
 //            victim.damage(user.getDamageSources().playerAttack(user), IMPLOSION_DAMAGE_MULTIPLIER);
             victim.damage(dmgSource, IMPLOSION_DAMAGE_MULTIPLIER);
         }
-        PacketByteBuf buf = PacketByteBufs.create();
-        E7Packets.packVec3d(buf, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+        CustomPayload p = new HyperionParticleAnimationPacket(pos);
         for (ServerPlayerEntity player : PlayerLookup.tracking(user))
         {
-            ServerPacketManager.sendPacketToClient(player, E7Packets.HYPERION_PARTICLE_ANIMATION, buf);
+            ServerPacketManager.sendPacketToClient(player, p);
         }
-        ServerPacketManager.sendPacketToClient(user, E7Packets.HYPERION_PARTICLE_ANIMATION, buf);
+        ServerPacketManager.sendPacketToClient(user, p);
         // cosmetic stuff
         user.getWorld().playSound(
                 null, // Player - if non-null, will play sound for every nearby player *except* the specified player
@@ -141,9 +145,9 @@ public class HyperionSwordItem extends SwordItem
         );
     }
 
-
+    @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext)
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type)
     {
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Item Ability: Wither Impact §e§lRIGHT CLICK"));
@@ -152,6 +156,7 @@ public class HyperionSwordItem extends SwordItem
         tooltip.add(Text.literal("§7Also applies the wither shield "));
         tooltip.add(Text.literal("§7scroll ability granting §c+%d ❤§7.".formatted(HEALING_AMOUNT)));
         tooltip.add(Text.literal(""));
+        super.appendTooltip(stack, context, tooltip, type);
     }
 
 
@@ -208,9 +213,8 @@ public class HyperionSwordItem extends SwordItem
             }
             else break;
         }
-        PacketByteBuf buf = PacketByteBufs.create();
-        E7Packets.packVec3d(buf, pos);
-        ClientPacketManager.sendPacketToServer(E7Packets.USE_HYPERION, buf);
+
+        ClientPacketManager.sendPacketToServer(new UseHyperionPacket(pos));
 
         return super.use(world, user, hand);
     }

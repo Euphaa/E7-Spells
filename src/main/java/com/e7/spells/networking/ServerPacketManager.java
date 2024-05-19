@@ -1,63 +1,44 @@
 package com.e7.spells.networking;
 
-import com.e7.spells.E7SpellsCommon;
-import com.e7.spells.item.tools.aote.AspectOfTheEndSwordItem;
-import com.e7.spells.item.tools.hyperion.HyperionSwordItem;
-import com.e7.spells.item.tools.zombie_sword.ZombieSwordItem;
-import com.e7.spells.statuseffects.ModStatusEffects;
+import com.e7.spells.item.tools.AspectOfTheEndSwordItem;
+import com.e7.spells.item.tools.HyperionSwordItem;
+import com.e7.spells.item.tools.ZombieSwordItem;
+import com.e7.spells.networking.payloads.InitPlayerNbtPacket;
+import com.e7.spells.networking.payloads.UseAotePacket;
+import com.e7.spells.networking.payloads.UseHyperionPacket;
 import com.e7.spells.util.IEntityDataSaver;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 
 public class ServerPacketManager
 {
-
-
-    public static void sendPacketToClient(ServerPlayerEntity user, Identifier channelName, PacketByteBuf buf)
+    public static void sendPacketToClient(ServerPlayerEntity player, CustomPayload packet)
     {
-        ServerPlayNetworking.send(user, channelName, buf);
+        ServerPlayNetworking.send(player, packet);
     }
-
 
     public static void registerPacketListeners()
     {
-        ServerPlayNetworking.registerGlobalReceiver(E7Packets.FEROCITY_KEY_ACTIVATION, ((server, player, handler, buf, responseSender) -> {
-
-            server.execute(() -> {
-                player.addStatusEffect(new StatusEffectInstance(ModStatusEffects.FEROCITY, 10*20, 2));
-            });
-        }));
-        ServerPlayNetworking.registerGlobalReceiver(E7Packets.INITIATE_PLAYER_NBT, ((server, player, handler, buf, responseSender) -> {
+        ServerPlayNetworking.registerGlobalReceiver(InitPlayerNbtPacket.ID, ((payload, context) -> {
             // sent by the client when they connect to the server.
-            server.execute(() -> {
-                NbtCompound nbt = ((IEntityDataSaver) player).getPersistentData();
-                // looks stupid, but it just makes sure that it exists so that it can actually regen.
-                int charges = nbt.getInt("zombie_sword_charges");
-                nbt.putInt("zombie_sword_charges", charges);
-                ZombieSwordItem.syncChargesNbtWithPlayer(player);
-            });
-        }));
-        ServerPlayNetworking.registerGlobalReceiver(E7Packets.USE_ASPECT_OF_THE_END, ((server, player, handler, buf, responseSender) -> {
 
-            Vec3d pos = E7Packets.unpackVec3d(buf);
-            server.execute(() -> {
-                AspectOfTheEndSwordItem.doTeleport(player, pos);
-//                AspectOfTheEndSwordItem.doTeleport(player, E7Packets.unpackVec3d(buf));
-            });
+            ServerPlayerEntity player = context.player();
+            NbtCompound nbt = ((IEntityDataSaver) player).getPersistentData();
+            // looks stupid, but it just makes sure that it exists so that it can actually regen.
+            int charges = nbt.getInt("zombie_sword_charges");
+            nbt.putInt("zombie_sword_charges", charges);
+            ZombieSwordItem.syncChargesNbtWithPlayer(player);
         }));
-        ServerPlayNetworking.registerGlobalReceiver(E7Packets.USE_HYPERION, ((server, player, handler, buf, responseSender) -> {
+        ServerPlayNetworking.registerGlobalReceiver(UseAotePacket.ID, ((payload, context) -> {
 
-            Vec3d pos = E7Packets.unpackVec3d(buf);
-            server.execute(() -> {
-                HyperionSwordItem.doWitherImpact(player, pos);
-//                AspectOfTheEndSwordItem.doTeleport(player, E7Packets.unpackVec3d(buf));
-            });
+            AspectOfTheEndSwordItem.doTeleport(context.player(), payload.vec());
+        }));
+        ServerPlayNetworking.registerGlobalReceiver(UseHyperionPacket.ID, ((payload, context) -> {
+
+            HyperionSwordItem.doWitherImpact(context.player(), payload.vec());
         }));
     }
 }

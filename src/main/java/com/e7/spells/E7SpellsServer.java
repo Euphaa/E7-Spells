@@ -1,12 +1,11 @@
 package com.e7.spells;
 
 import com.e7.spells.item.ModItems;
+import com.e7.spells.networking.ModPayloads;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.statuseffects.ModStatusEffects;
 import com.e7.spells.util.Scheduler;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 public class E7SpellsServer implements DedicatedServerModInitializer
 {
@@ -15,7 +14,8 @@ public class E7SpellsServer implements DedicatedServerModInitializer
     @Override
     public void onInitializeServer()
     {
-//        server = this;
+        /* register payloads */
+        ModPayloads.registerPayloads();
 
         /* register event handlers */
         scheduler.registerTicker();

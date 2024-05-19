@@ -1,6 +1,5 @@
 package com.e7.spells;
 
-import net.minecraft.data.server.tag.vanilla.VanillaDamageTypeTagProvider;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;

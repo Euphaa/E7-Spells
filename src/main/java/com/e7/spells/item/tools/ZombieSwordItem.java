@@ -1,19 +1,18 @@
-package com.e7.spells.item.tools.zombie_sword;
+package com.e7.spells.item.tools;
 
 import com.e7.spells.E7SpellsCommon;
-import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
+import com.e7.spells.networking.payloads.ZombieSwordParticleAnimationPacket;
 import com.e7.spells.util.IEntityDataSaver;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
@@ -28,17 +27,19 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class ZombieSwordItem extends SwordItem
+public class ZombieSwordItem extends WeaponItem
 {
+    public static final ToolMaterial MATERIAL = ModToolMaterials.ZOMBIE;
+    public static final int ATTACK_DAMAGE = 2;
+    public static final float ATTACK_SPEED = -2.4f;
     private static final int MAX_CHARGES = 5;
     private static final int HEAL_AMOUNT = 4;
     private static final int ALLY_HEAL_AMOUNT = 2;
     private static final int HEAL_RANGE = 10;
 
-
     public ZombieSwordItem()
     {
-        super(ZombieToolMaterial.INSTANCE, 2, -2.4f, new Item.Settings());
+        super(MATERIAL, new Settings().attributeModifiers(WeaponItem.createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
     }
 
 
@@ -62,7 +63,7 @@ public class ZombieSwordItem extends SwordItem
     {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeInt(((IEntityDataSaver) player).getPersistentData().getInt("zombie_sword_charges"));
-        ServerPacketManager.sendPacketToClient(player, E7Packets.SYNC_ZOMBIE_SWORD_CHARGES, buf);
+//        ServerPacketManager.sendPacketToClient(player, E7Packets.SYNC_ZOMBIE_SWORD_CHARGES, buf);
     }
 
 
@@ -86,7 +87,8 @@ public class ZombieSwordItem extends SwordItem
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext) {
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type)
+    {
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Ability: Instant Heal §e§lRIGHT CLICK"));
         tooltip.add(Text.literal(""));
@@ -104,7 +106,9 @@ public class ZombieSwordItem extends SwordItem
         else color = "§a";
         tooltip.add(Text.literal("%s%d§8/§a%d§8 charges left".formatted(color, charges, MAX_CHARGES)));
         tooltip.add(Text.literal(""));
+        super.appendTooltip(stack, context, tooltip, type);
     }
+
 
     @Environment(EnvType.CLIENT)
     public static void doParticleAnimation(Vec3d pos)
@@ -152,7 +156,7 @@ public class ZombieSwordItem extends SwordItem
             }
 
             nbt.putInt("zombie_sword_charges", charges);
-            ServerPacketManager.sendPacketToClient((ServerPlayerEntity) user, E7Packets.ZOMBIE_SWORD_PARTICLE_ANIMATION, PacketByteBufs.empty());
+            ServerPacketManager.sendPacketToClient((ServerPlayerEntity) user, new ZombieSwordParticleAnimationPacket(user.getPos()));
         }
         syncChargesNbtWithPlayer((ServerPlayerEntity) user);
 

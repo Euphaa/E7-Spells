@@ -1,65 +1,47 @@
 package com.e7.spells.networking;
 
-import com.e7.spells.item.tools.aote.AspectOfTheEndSwordItem;
-import com.e7.spells.item.tools.hyperion.HyperionSwordItem;
-import com.e7.spells.item.tools.zombie_sword.ZombieSwordItem;
+import com.e7.spells.item.tools.AspectOfTheEndSwordItem;
+import com.e7.spells.item.tools.HyperionSwordItem;
+import com.e7.spells.item.tools.ZombieSwordItem;
+import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
+import com.e7.spells.networking.payloads.FerocityParticleAnimationPacket;
+import com.e7.spells.networking.payloads.HyperionParticleAnimationPacket;
+import com.e7.spells.networking.payloads.ZombieSwordParticleAnimationPacket;
 import com.e7.spells.statuseffects.FerocityStatusEffect;
-import com.e7.spells.util.IEntityDataSaver;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.packet.CustomPayload;
 
 public class ClientPacketManager
 {
 
     public static void registerPacketListeners()
     {
-        ClientPlayNetworking.registerGlobalReceiver(E7Packets.FEROCITY_PARTICLE_ANIMATION,
-                (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(FerocityParticleAnimationPacket.ID, (payload, context) -> {
 
-            Vec3d pos = E7Packets.unpackVec3d(buf);
-            client.execute(() -> {
-                FerocityStatusEffect.createFerocityParticles(client, pos);
-            });
+            FerocityStatusEffect.createFerocityParticles(payload.vec());
         });
-        ClientPlayNetworking.registerGlobalReceiver(E7Packets.ZOMBIE_SWORD_PARTICLE_ANIMATION,
-                (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(ZombieSwordParticleAnimationPacket.ID, (payload, context) -> {
 
-            Vec3d pos = client.player.getPos();
-            client.execute(() -> {
-                ZombieSwordItem.doParticleAnimation(pos);
-            });
+            ZombieSwordItem.doParticleAnimation(payload.vec());
         });
-        ClientPlayNetworking.registerGlobalReceiver(E7Packets.SYNC_ZOMBIE_SWORD_CHARGES,
-                (client, handler, buf, responseSender) -> {
+//        ClientPlayNetworking.registerGlobalReceiver(E7Packets.SYNC_ZOMBIE_SWORD_CHARGES,
+//                (client, handler, buf, responseSender) -> {
+//
+//            int charges = buf.readInt();
+//            ((IEntityDataSaver) MinecraftClient.getInstance().player).getPersistentData().putInt("zombie_sword_charges", charges);
+//        });
+        ClientPlayNetworking.registerGlobalReceiver(AoteParticleAnimationPacket.ID, (payload, context) -> {
 
-            int charges = buf.readInt();
-            client.execute(() -> {
-                ((IEntityDataSaver) MinecraftClient.getInstance().player).getPersistentData().putInt("zombie_sword_charges", charges);
-            });
+            AspectOfTheEndSwordItem.doParticleAnimation(payload.vec());
         });
-        ClientPlayNetworking.registerGlobalReceiver(E7Packets.AOTE_PARTICLE_ANIMATION,
-                (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(HyperionParticleAnimationPacket.ID, (payload, context) -> {
 
-            Vec3d pos = E7Packets.unpackVec3d(buf);
-            client.execute(() -> {
-                AspectOfTheEndSwordItem.doParticleAnimation(pos);
-            });
-        });
-        ClientPlayNetworking.registerGlobalReceiver(E7Packets.HYPERION_PARTICLE_ANIMATION,
-                (client, handler, buf, responseSender) -> {
-
-            Vec3d pos = E7Packets.unpackVec3d(buf);
-            client.execute(() -> {
-                HyperionSwordItem.doParticleAnimation(pos);
-            });
+            HyperionSwordItem.doParticleAnimation(payload.vec());
         });
     }
 
-    public static void sendPacketToServer(Identifier channel, PacketByteBuf buf)
+    public static void sendPacketToServer(CustomPayload payload)
     {
-        ClientPlayNetworking.send(channel, buf);
+        ClientPlayNetworking.send(payload);
     }
 }

@@ -1,19 +1,17 @@
-package com.e7.spells.item.tools.aote;
+package com.e7.spells.item.tools;
 
 import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.networking.ClientPacketManager;
-import com.e7.spells.networking.E7Packets;
 import com.e7.spells.networking.ServerPacketManager;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
+import com.e7.spells.networking.payloads.UseAotePacket;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -29,12 +27,15 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class AspectOfTheEndSwordItem extends SwordItem
+public class AspectOfTheEndSwordItem extends WeaponItem
 {
+    public static final ToolMaterial MATERIAL = ModToolMaterials.END;
+    public static final int ATTACK_DAMAGE = 2;
+    public static final float ATTACK_SPEED = -2.4f;
     public static final int TELEPORT_DISTANCE = 12;
     public AspectOfTheEndSwordItem()
     {
-        super(AspectOfTheEndMaterial.INSTANCE, 2, -2f, new Item.Settings());
+        super(MATERIAL, new Settings().attributeModifiers(createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
     }
 
 
@@ -42,11 +43,9 @@ public class AspectOfTheEndSwordItem extends SwordItem
     {
         user.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
         user.fallDistance = 0;
-        PacketByteBuf buf = PacketByteBufs.create();
-        E7Packets.packVec3d(buf, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
         for (PlayerEntity player : PlayerLookup.tracking(user))
         {
-            ServerPacketManager.sendPacketToClient(user, E7Packets.AOTE_PARTICLE_ANIMATION, buf);
+            ServerPacketManager.sendPacketToClient(user, new AoteParticleAnimationPacket(pos));
         }
 
         user.getWorld().playSound(
@@ -77,16 +76,15 @@ public class AspectOfTheEndSwordItem extends SwordItem
         }
     }
 
-
     @Override
-    public void appendTooltip(ItemStack itemStack, World world, List<Text> tooltip, TooltipContext tooltipContext)
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type)
     {
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Ability: Instant Transmission §e§lRIGHT CLICK"));
         tooltip.add(Text.literal("§7Teleport ahead of you by §e%d blocks".formatted(TELEPORT_DISTANCE)));
         tooltip.add(Text.literal(""));
+        super.appendTooltip(stack, context, tooltip, type);
     }
-
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand)
@@ -142,9 +140,8 @@ public class AspectOfTheEndSwordItem extends SwordItem
             }
             else break;
         }
-        PacketByteBuf buf = PacketByteBufs.create();
-        E7Packets.packVec3d(buf, pos);
-        ClientPacketManager.sendPacketToServer(E7Packets.USE_ASPECT_OF_THE_END, buf);
+
+        ClientPacketManager.sendPacketToServer(new UseAotePacket(pos));
 
         return super.use(world, user, hand);
     }
