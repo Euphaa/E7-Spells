@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "e7-spells:item/storm_leggings"
+    "layer0": "e7-spells:item/goldor_helmet"
   }
 }

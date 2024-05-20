@@ -37,13 +37,12 @@ public class E7SpellsClient implements ClientModInitializer
                         entries.add(ModItems.ASPECT_OF_THE_END_SWORD);
                         entries.add(ModItems.HYPERION_SWORD);
                         for (Item armorPiece : ModItems.STORM_ARMOR.values()) entries.add(armorPiece);
+                        for (Item armorPiece : ModItems.NECRON_ARMOR.values()) entries.add(armorPiece);
+                        for (Item armorPiece : ModItems.GOLDOR_ARMOR.values()) entries.add(armorPiece);
+                        for (Item armorPiece : ModItems.MAXOR_ARMOR.values()) entries.add(armorPiece);
                     }))
                     .build()
     );
-
-    static {
-        System.out.println("printing here be thing was initialized");
-    }
 
     @Override
     public void onInitializeClient()
