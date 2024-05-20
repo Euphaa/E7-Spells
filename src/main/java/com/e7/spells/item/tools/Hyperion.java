@@ -101,8 +101,8 @@ public class Hyperion extends WeaponItem
         DamageSource dmgSource = ModDamageTypes.of(user.getWorld(), ModDamageTypes.MAGIC_DAMAGE_TYPE);
         for (LivingEntity victim : user.getWorld().getEntitiesByClass(LivingEntity.class, BoundingBox, entity -> !(entity instanceof PlayerEntity)))
         {
-//            victim.damage(user.getDamageSources().playerAttack(user), IMPLOSION_DAMAGE_MULTIPLIER);
-            victim.damage(dmgSource, IMPLOSION_DAMAGE_MULTIPLIER);
+            victim.applyDamage(dmgSource, IMPLOSION_DAMAGE_MULTIPLIER);
+            victim.getWorld().sendEntityDamage(victim, dmgSource);
         }
         CustomPayload p = new HyperionParticleAnimationPacket(pos);
         for (ServerPlayerEntity player : PlayerLookup.tracking(user))

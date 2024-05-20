@@ -40,6 +40,10 @@ fabricApi {
 	configureDataGeneration()
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/e7-spells.accesswidener")
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

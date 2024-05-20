@@ -32,6 +32,7 @@
 	"mixins": [
 		"e7-spells.mixins.json"
 	],
+	"accessWidener" : "e7-spells.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.11",
 		"minecraft": "~1.20.1",

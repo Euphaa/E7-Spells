@@ -1,0 +1,6 @@
+accessWidener v2 named
+
+accessible class net/minecraft/entity/LivingEntity
+accessible method net/minecraft/entity/LivingEntity applyDamage (Lnet/minecraft/entity/damage/DamageSource;F)V
+accessible method net/minecraft/entity/LivingEntity animateDamage (Lnet/minecraft/entity/damage/DamageSource;F)V
+accessible field net/minecraft/entity/LivingEntity lastDamageTaken F
