@@ -11,6 +11,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -34,10 +36,7 @@ public class E7SpellsClient implements ClientModInitializer
                         entries.add(ModItems.ZOMBIE_SWORD);
                         entries.add(ModItems.ASPECT_OF_THE_END_SWORD);
                         entries.add(ModItems.HYPERION_SWORD);
-                        entries.add(ModItems.STORM_HELMET);
-                        entries.add(ModItems.STORM_CHESTPLATE);
-                        entries.add(ModItems.STORM_LEGGINGS);
-                        entries.add(ModItems.STORM_BOOTS);
+                        for (Item armorPiece : ModItems.STORM_ARMOR.values()) entries.add(armorPiece);
                     }))
                     .build()
     );

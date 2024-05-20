@@ -1,8 +1,6 @@
 package com.e7.spells.item;
 
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -13,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -37,6 +36,7 @@ public class ModArmorMaterials
 
         return Registry.registerReference(Registries.ARMOR_MATERIAL, new Identifier(id), new ArmorMaterial(enumMap, enchantability, equipSound, repairIngredient, layers, toughness, knockbackResistance));
     }
+
 
     static {
         STORM = register(

@@ -8,12 +8,25 @@ import com.e7.spells.item.tools.AspectOfTheEnd;
 import com.e7.spells.item.tools.Hyperion;
 import com.e7.spells.item.tools.ZombieSword;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ModItems {
+    private static final HashMap<ArmorItem.Type, String> armorSuffixes = new HashMap<>();
+
+    static {
+        armorSuffixes.put(ArmorItem.Type.HELMET, "_helmet");
+        armorSuffixes.put(ArmorItem.Type.CHESTPLATE, "_chestplate");
+        armorSuffixes.put(ArmorItem.Type.LEGGINGS, "_leggings");
+        armorSuffixes.put(ArmorItem.Type.BOOTS, "_boots");
+    }
 
     public static final Item SMILE = registerItem("smile", new Smile(new Item.Settings()));
     public static final Item GUN = registerItem("gun", new Gun(new Item.Settings()));
@@ -21,21 +34,10 @@ public class ModItems {
     public static final Item ASPECT_OF_THE_END_SWORD = registerItem("aspect_of_the_end_sword", new AspectOfTheEnd());
     public static final Item HYPERION_SWORD = registerItem("hyperion_sword", new Hyperion());
 //    public static final ArmorMaterial STORM_MATERIAL = new StormArmorMaterial();
-    public static final Item STORM_HELMET = registerItem("storm_helmet", new ArmorItem(ModArmorMaterials.STORM, ArmorItem.Type.HELMET, new Item.Settings()));
-    public static final Item STORM_CHESTPLATE = registerItem("storm_chestplate", new ArmorItem(ModArmorMaterials.STORM, ArmorItem.Type.CHESTPLATE, new Item.Settings()));
-    public static final Item STORM_LEGGINGS = registerItem("storm_leggings", new ArmorItem(ModArmorMaterials.STORM, ArmorItem.Type.LEGGINGS, new Item.Settings()));
-    public static final Item STORM_BOOTS = registerItem("storm_boots", new ArmorItem(ModArmorMaterials.STORM, ArmorItem.Type.BOOTS, new Item.Settings()));
+    public static final Map<ArmorItem.Type, Item> STORM_ARMOR = makeArmorSet("storm", ModArmorMaterials.STORM, 49);
 
 
     //Registers the item into the game
-    public static void registerModItemsForClient()
-    {
-        E7SpellsCommon.E7SPELLS.info("Registering Mod Items for " + E7SpellsCommon.MODID);
-//        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-//            // send packet to set nbt data to player
-//            ClientPacketManager.sendPacketToServer(new InitPlayerNbtPacket());
-//        });
-    }
 
     public static void registerModItemsForServer()
     {
@@ -44,8 +46,42 @@ public class ModItems {
 
     }
 
-    private static Item registerItem(String name, Item item)
+    public static Item registerItem(String name, Item item)
     {
         return Registry.register(Registries.ITEM, new Identifier(E7SpellsCommon.MODID, name), item);
+    }
+    public static Item makeArmorPiece(String name, RegistryEntry<ArmorMaterial> material, int durability, ArmorItem.Type type)
+    {
+        return registerItem(
+                name + armorSuffixes.get(type),
+                new ArmorItem(
+                        material,
+                        type,
+                        new Item.Settings()
+                                .maxDamage(type.getMaxDamage(durability))
+                )
+        );
+    }
+
+    public static HashMap<ArmorItem.Type, Item> makeArmorSet(String name, RegistryEntry<ArmorMaterial> material, int durability)
+    {
+        HashMap<ArmorItem.Type, Item> map = new HashMap<>();
+        map.put(
+            ArmorItem.Type.HELMET,
+            makeArmorPiece(name, material, durability, ArmorItem.Type.HELMET)
+        );
+        map.put(
+            ArmorItem.Type.CHESTPLATE,
+            makeArmorPiece(name, material, durability, ArmorItem.Type.CHESTPLATE)
+        );
+        map.put(
+            ArmorItem.Type.LEGGINGS,
+            makeArmorPiece(name, material, durability, ArmorItem.Type.LEGGINGS)
+        );
+        map.put(
+            ArmorItem.Type.BOOTS,
+            makeArmorPiece(name, material, durability, ArmorItem.Type.BOOTS)
+        );
+        return map;
     }
 }
