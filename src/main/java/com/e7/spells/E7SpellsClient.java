@@ -2,9 +2,12 @@ package com.e7.spells;
 
 import com.e7.spells.item.ModItems;
 import com.e7.spells.networking.ClientPacketManager;
+import me.x150.renderer.Renderer;
+import me.x150.renderer.render.Renderer2d;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,6 +53,9 @@ public class E7SpellsClient implements ClientModInitializer
 
         /* register event handlers */
         ClientPacketManager.registerPacketListeners();
+        HudRenderCallback.EVENT.register(((context, tickDelta) -> {
+            ManaOverlay.renderMana(context, getPlayer());
+        }));
 
         /* register key bindings */
         KeyBindings.registerKeys();
@@ -67,7 +73,6 @@ public class E7SpellsClient implements ClientModInitializer
 
     public static PlayerEntity getPlayer()
     {
-
         return MinecraftClient.getInstance().player;
     }
 }
