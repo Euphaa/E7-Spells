@@ -4,6 +4,7 @@ import com.e7.spells.item.ModItems;
 import com.e7.spells.item.tools.ZombieSword;
 import com.e7.spells.networking.ModPayloads;
 import com.e7.spells.networking.ServerPacketManager;
+import com.e7.spells.statuseffects.FerocityStatusEffect;
 import com.e7.spells.statuseffects.ModStatusEffects;
 import com.e7.spells.util.CCAComponents;
 import com.e7.spells.util.Scheduler;
@@ -35,6 +36,7 @@ public class E7SpellsCommon implements ModInitializer
 
         /* register effects */
         ModStatusEffects.registerEffects();
+        FerocityStatusEffect.registerEffect();
 
         /* register commands */
         Commands.registerCommands();

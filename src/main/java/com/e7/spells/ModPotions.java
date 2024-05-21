@@ -17,16 +17,16 @@ public class ModPotions
 {
     public static final Potion EXAMPLE_POTION =
             Registry.register(Registries.POTION, new Identifier(E7SpellsCommon.MODID, "ferocity_potion_0"),
-                    new Potion(new StatusEffectInstance(RegistryEntry.of(ModStatusEffects.FEROCITY), 3600, 0)));
+                    new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 3600, 0)));
     public static final Potion LONG_EXAMPLE_POTION =
             Registry.register(Registries.POTION, new Identifier("e7-spells", "long_ferocity_potion_0"),
-            new Potion(new StatusEffectInstance(RegistryEntry.of(ModStatusEffects.FEROCITY), 9600, 0)));
+            new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 9600, 0)));
     public static final Potion EXAMPLE_POTION_2 =
             Registry.register(Registries.POTION, new Identifier("e7-spells", "ferocity_potion_1"),
-                    new Potion(new StatusEffectInstance(RegistryEntry.of(ModStatusEffects.FEROCITY), 2400, 1)));
+                    new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 2400, 1)));
     public static final Potion EXAMPLE_POTION_3 =
             Registry.register(Registries.POTION, new Identifier("e7-spells", "ferocity_potion_2"),
-                    new Potion(new StatusEffectInstance(RegistryEntry.of(ModStatusEffects.FEROCITY), 1800, 2)));
+                    new Potion(new StatusEffectInstance(ModStatusEffects.FEROCITY, 1800, 2)));
 
     public static void registerPotions()
     {

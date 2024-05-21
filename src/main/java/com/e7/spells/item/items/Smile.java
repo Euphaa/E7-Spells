@@ -22,7 +22,7 @@ public class Smile extends Item {
 
             if (hand == Hand.MAIN_HAND) {
 
-                player.addStatusEffect (new StatusEffectInstance(RegistryEntry.of(ModStatusEffects.FEROCITY), 10*20, 1));
+                player.addStatusEffect (new StatusEffectInstance(ModStatusEffects.FEROCITY, 10*20, 1));
 
                 //player.getStackInHand(hand).decrement(1);
             }

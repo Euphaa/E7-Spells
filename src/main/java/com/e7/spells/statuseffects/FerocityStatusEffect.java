@@ -13,28 +13,37 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.swing.*;
+import java.util.Map;
 import java.util.Random;
 
 public class FerocityStatusEffect extends StatusEffect
 {
 
     private static final float FEROCITY_DAMAGE_MULTIPLIER = 1f;
-    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .8f;
-    private static final int FEROCITY_HIT_DELAY = 10;
+    private static final float FEROCITY_KNOCKBACK_MULTIPLIER = .3f;
+    private static final int FEROCITY_HIT_DELAY = 7;
     public FerocityStatusEffect()
     {
         super(StatusEffectCategory.BENEFICIAL, 0x880808);
@@ -55,40 +64,40 @@ public class FerocityStatusEffect extends StatusEffect
         return super.applyUpdateEffect(entity, amplifier);
     }
 
+
+
     public static void registerEffect()
     {
+        TagKey<StatusEffect> effect = TagKey.of(RegistryKeys.STATUS_EFFECT, new Identifier(E7SpellsCommon.MODID, "ferocity"));
         AttackEntityCallback.EVENT.register((attacker, world, hand, victim, hitResult) -> {
-
+            System.out.println("event fired");
             if (victim instanceof EnderDragonPart) victim = ((EnderDragonPart) victim).owner;
-            if (!doesFerocityProc(attacker, world, victim)) return ActionResult.PASS;
-
-            procFerocity(attacker, world, victim);
+            if (world.isClient()) return ActionResult.PASS;
+            StatusEffectInstance instance = null;
+            for (StatusEffectInstance effectInstance : attacker.getStatusEffects())
+            {
+                System.out.println(effectInstance.getEffectType());
+                if (effectInstance.getEffectType().value() == ModStatusEffects.FEROCITY_EFFECT)
+                {
+                    instance = effectInstance;
+                }
+            }
+            if (instance == null) return ActionResult.PASS;
+//            if (!attacker.hasStatusEffect(ModStatusEffects.FEROCITY)) return ActionResult.PASS;
+//            if (!attacker.getActiveStatusEffects().keySet().toString().contains("FerocityStatusEffect")) return ActionResult.PASS;
+            System.out.println("has status effect");
+            if (!(victim instanceof LivingEntity)) return ActionResult.PASS;
+            System.out.println("is living entity");
+            procFerocity(attacker, world, (LivingEntity) victim, instance);
 
             return ActionResult.PASS; // Continue with normal attack handling
         });
     }
 
-    private static boolean doesFerocityProc(PlayerEntity attacker, World world, Entity victim)
-    {
-        if (world.isClient()) return false;
-        if (!attacker.hasStatusEffect(RegistryEntry.of(ModStatusEffects.FEROCITY))) return false;
-        if (!(victim instanceof LivingEntity)) return false;
-        if (((LivingEntity) victim).hurtTime > 0) return false;
-        return true;
-    }
-
-    private static boolean doesFerocityProc(PlayerEntity attacker, World world, EnderDragonEntity victim)
-    {
-        if (world.isClient()) return false;
-        if (!attacker.hasStatusEffect(RegistryEntry.of(ModStatusEffects.FEROCITY))) return false;
-        if (victim.hurtTime > 0) return false;
-        return true;
-    }
-
-    private static void procFerocity(PlayerEntity attacker, World world, Entity victim)
+    private static void procFerocity(PlayerEntity attacker, World world, LivingEntity victim, StatusEffectInstance instance)
     {
         float damage = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
-        int ferocityLevel = attacker.getStatusEffect(RegistryEntry.of(ModStatusEffects.FEROCITY)).getAmplifier() + 1;
+        int ferocityLevel = instance.getAmplifier() + 1;
         int guarenteedProcs = Math.floorDiv(ferocityLevel, 2);
         if (ferocityLevel % 2 == 1 && new Random().nextInt(2) == 1) guarenteedProcs++;
         Vec3d direction = attacker.getPos().subtract(victim.getPos()).normalize();
@@ -96,19 +105,20 @@ public class FerocityStatusEffect extends StatusEffect
 
         for (int i = 1; i <= guarenteedProcs; i++)
         {
-            E7SpellsCommon.getScheduler().addTask(i * FEROCITY_HIT_DELAY + 1, (server) -> {
+            E7SpellsCommon.getScheduler().addTask(i * FEROCITY_HIT_DELAY, (server) -> {
                 doFerocitySwipe(attacker, world, victim, direction, damage, knockback);
             });
         }
-
-
     }
 
-    private static void doFerocitySwipe(PlayerEntity attacker, World world, Entity victim, Vec3d direction, float damage, float knockback)
+    private static void doFerocitySwipe(PlayerEntity attacker, World world, LivingEntity victim, Vec3d direction, float damage, float knockback)
     {
         if (!victim.isAlive()) return;
-        victim.damage(attacker.getDamageSources().playerAttack(attacker), damage * FEROCITY_DAMAGE_MULTIPLIER);
-        ((LivingEntity) victim).takeKnockback(knockback * FEROCITY_KNOCKBACK_MULTIPLIER, direction.getX(), direction.getZ());
+        System.out.println("swipe");
+        DamageSource source = attacker.getDamageSources().playerAttack(attacker);
+        victim.applyDamage(source, damage * FEROCITY_DAMAGE_MULTIPLIER);
+        victim.getWorld().sendEntityDamage(victim, source);
+        victim.takeKnockback(knockback * FEROCITY_KNOCKBACK_MULTIPLIER, direction.getX(), direction.getZ());
 
         CustomPayload p = new FerocityParticleAnimationPacket(victim.getPos());
         for (ServerPlayerEntity player : PlayerLookup.tracking(victim))
