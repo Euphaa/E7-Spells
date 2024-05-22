@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public enum ModToolMaterials implements ToolMaterial
 {
     END(BlockTags.INCORRECT_FOR_STONE_TOOL, 263, 0f, 4f, 12, () -> Ingredient.ofItems(Items.ENDER_EYE)),
-    NECRON(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 2020, 0f, 6f, 25, () -> Ingredient.ofItems(Items.NETHER_STAR)),
+    NECRON(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 2020, 0f, 6f, 12, () -> Ingredient.ofItems(Items.NETHER_STAR)),
     ZOMBIE(BlockTags.INCORRECT_FOR_WOODEN_TOOL, 250, 0f, 4f, 9, () -> Ingredient.ofItems(Items.ROTTEN_FLESH));
 
     private final TagKey<Block> inverseTag;

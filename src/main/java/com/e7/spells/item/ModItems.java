@@ -68,9 +68,9 @@ public class ModItems {
                     -1.6f
             )
     );
-    public static final Item WITHER_SHIELD_SCROLL = registerItem("wither_shield", new Item(new Item.Settings()));
-    public static final Item IMPLOSION_SCROLL = registerItem("implosion", new Item(new Item.Settings()));
-    public static final Item SHADOW_WARP_SCROLL = registerItem("shadow_warp", new Item(new Item.Settings()));
+    public static final Item WITHER_SHIELD_SCROLL = registerItem("wither_shield", new Item(new Item.Settings().maxCount(1)));
+    public static final Item IMPLOSION_SCROLL = registerItem("implosion", new Item(new Item.Settings().maxCount(1)));
+    public static final Item SHADOW_WARP_SCROLL = registerItem("shadow_warp", new Item(new Item.Settings().maxCount(1)));
 //    public static final ArmorMaterial STORM_MATERIAL = new StormArmorMaterial();
     public static final Map<ArmorItem.Type, Item> STORM_ARMOR = makeArmorSet("storm", ModArmorMaterials.STORM, 49);
     public static final Map<ArmorItem.Type, Item> NECRON_ARMOR = makeArmorSet(
@@ -89,7 +89,7 @@ public class ModItems {
             "maxor",
             ModArmorMaterials.MAXOR,
             49,
-            new ItemModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, .15f, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE)
+            new ItemModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, .35f, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE)
     );
 
 
