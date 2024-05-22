@@ -2,12 +2,15 @@ package com.e7.spells.item.tools;
 
 import com.e7.spells.E7SpellsCommon;
 import com.e7.spells.ModDamageTypes;
+import com.e7.spells.item.ItemModifier;
+import com.e7.spells.item.WeaponItem;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
 import com.e7.spells.networking.payloads.HyperionParticleAnimationPacket;
 import com.e7.spells.networking.payloads.UseHyperionPacket;
 import com.e7.spells.util.CCAComponents;
+import com.e7.spells.util.WitherScrollsData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -36,41 +39,52 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Random;
 
-public class Hyperion extends WeaponItem
+public class WitherBlade extends WeaponItem
 {
     public static final ToolMaterial MATERIAL = ModToolMaterials.NECRON;
-    public static final int ATTACK_DAMAGE = 2;
-    public static final float ATTACK_SPEED = -2f;
     public static final int MANA_COST = 150;
     public static final int TELEPORT_DISTANCE = 10;
     public static final int IMPLOSION_RANGE = 7;
     public static final int IMPLOSION_DAMAGE_MULTIPLIER = 16;
-    private static final int HEALING_AMOUNT = 2;
+    private static final int HEALING_AMOUNT = 8;
 
-    public Hyperion()
+    public WitherBlade(ToolMaterial material, int damage, float attackSpeed, ItemModifier... modifiers)
     {
-        super(MATERIAL, new Settings().attributeModifiers(createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
+        super(material, damage, attackSpeed, modifiers);
     }
-
 
     public static void doWitherImpact(ServerPlayerEntity user, Vec3d pos)
     {
+        WitherScrollsData sword = user.getMainHandStack().getComponents().get(WitherScrollsData.COMPONENT_TYPE);
+        if (sword == null) return;
+        boolean hasShield = (sword.state() & 0b00000001) != 0;
+        boolean hasImplosion = (sword.state() & 0b00000010) != 0;
+        boolean hasWarp = (sword.state() & 0b00000100) != 0;
+
+        if (!hasShield && !hasImplosion && !hasWarp) return;
+        if (!CCAComponents.PLAYER_NBT.get(user).subtractAbilityCost(MANA_COST)) return;
+
+
 //        ItemStack hyperion = user.getMainHandStack();
-//        if (hyperion.getNbt().getBoolean("has_shadow_warp")) doShadowWarp(user, pos);
-//        if (hyperion.getNbt().getBoolean("has_implosion")) doImplosion(user, pos);
-//        if (hyperion.getNbt().getBoolean("has_wither_shield")) doWitherShield(user, pos);
-        if (CCAComponents.PLAYER_NBT.get(user).subtractAbilityCost(MANA_COST))
+
+        if (hasWarp)
         {
             doShadowWarp(user, pos);
-            doImplosion(user, pos);
-            doWitherShield(user, pos);
+            if (hasImplosion) doImplosion(user, pos);
+            if (hasShield) doWitherShield(user, pos);
+        }
+        else
+        {
+            if (hasImplosion) doImplosion(user, user.getPos());
+            if (hasShield) doWitherShield(user, user.getPos());
         }
 
     }
 
     private static void doWitherShield(ServerPlayerEntity user, Vec3d pos)
     {
-        user.heal(2);
+        if (CCAComponents.PLAYER_NBT.get(user).getWither_shield_cooldown() > 0) return;
+        user.heal(HEALING_AMOUNT);
         user.getWorld().playSound(
                 null, // Player - if non-null, will play sound for every nearby player *except* the specified player
                 pos.getX(), pos.getY(), pos.getZ(), // The position of where the sound will come from
@@ -79,6 +93,7 @@ public class Hyperion extends WeaponItem
                 .8f, //Volume multiplier, 1 is normal, 0.5 is half volume, etc
                 1.2f // Pitch multiplier, 1 is normal, 0.5 is half pitch, etc
         );
+        CCAComponents.PLAYER_NBT.get(user).setWither_shield_cooldown(100);
         CustomPayload p = new AoteParticleAnimationPacket(pos);
         for (ServerPlayerEntity player : PlayerLookup.tracking(user))
         {
@@ -155,12 +170,50 @@ public class Hyperion extends WeaponItem
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type)
     {
-        tooltip.add(Text.literal(""));
-        tooltip.add(Text.literal("§6Item Ability: Wither Impact §e§lRIGHT CLICK"));
-        tooltip.add(Text.literal("§7Teleports §e%d blocks §7ahead of you. Then implode".formatted(TELEPORT_DISTANCE)));
-        tooltip.add(Text.literal("§7dealing §4%d damage §7to nearby enemies.".formatted(IMPLOSION_DAMAGE_MULTIPLIER)));
-        tooltip.add(Text.literal("§7Also applies the wither shield "));
-        tooltip.add(Text.literal("§7scroll ability granting §c+%d ❤§7.".formatted(HEALING_AMOUNT)));
+        WitherScrollsData sword = stack.getComponents().get(E7SpellsCommon.WITHER_SCROLLS_DATA);
+        if (sword == null) return;
+
+        boolean hasShield = (sword.state() & 0b00000001) != 0;
+        boolean hasImplosion = (sword.state() & 0b00000010) != 0;
+        boolean hasWarp = (sword.state() & 0b00000100) != 0;
+
+        if (hasImplosion && hasShield && hasWarp)
+        {
+            tooltip.add(Text.literal(""));
+            tooltip.add(Text.literal("§6Item Ability: Wither Impact §e§lRIGHT CLICK"));
+            tooltip.add(Text.literal("§7Teleports §e%d blocks §7ahead of you. Then implode".formatted(TELEPORT_DISTANCE)));
+            tooltip.add(Text.literal("§7dealing §4%d damage §7to nearby enemies.".formatted(IMPLOSION_DAMAGE_MULTIPLIER)));
+            tooltip.add(Text.literal("§7Also applies the wither shield "));
+            tooltip.add(Text.literal("§7scroll ability granting §c+%d ❤§7 (5s cooldown).".formatted(HEALING_AMOUNT)));
+            tooltip.add(Text.literal("§8Mana Cost: §3%d".formatted(MANA_COST)));
+            super.appendTooltip(stack, context, tooltip, type);
+        }
+        else
+        {
+            if (hasImplosion)
+            {
+                tooltip.add(Text.literal(""));
+                tooltip.add(Text.literal("§6Item Ability: Implosion §e§lRIGHT CLICK"));
+                tooltip.add(Text.literal("§7Deals §4%d damage §7to nearby enemies.".formatted(IMPLOSION_DAMAGE_MULTIPLIER)));
+                tooltip.add(Text.literal("§8Mana Cost: §3%d".formatted(MANA_COST)));
+
+            }
+            if (hasShield)
+            {
+                tooltip.add(Text.literal(""));
+                tooltip.add(Text.literal("§6Item Ability: Wither Shield §e§lRIGHT CLICK"));
+                tooltip.add(Text.literal("§7Grants §c+%d ❤§7 (5s cooldown).".formatted(HEALING_AMOUNT)));
+                tooltip.add(Text.literal("§8Mana Cost: §3%d".formatted(MANA_COST)));
+
+            }
+            if (hasWarp)
+            {
+                tooltip.add(Text.literal(""));
+                tooltip.add(Text.literal("§6Item Ability: Shadow Warp §e§lRIGHT CLICK"));
+                tooltip.add(Text.literal("§7Teleports §e%d blocks §7ahead of you.".formatted(TELEPORT_DISTANCE)));
+                tooltip.add(Text.literal("§8Mana Cost: §3%d".formatted(MANA_COST)));
+            }
+        }
         tooltip.add(Text.literal(""));
         super.appendTooltip(stack, context, tooltip, type);
     }

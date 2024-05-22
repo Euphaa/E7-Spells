@@ -3,4 +3,8 @@ accessWidener v2 named
 accessible class net/minecraft/entity/LivingEntity
 accessible method net/minecraft/entity/LivingEntity applyDamage (Lnet/minecraft/entity/damage/DamageSource;F)V
 accessible method net/minecraft/entity/LivingEntity animateDamage (Lnet/minecraft/entity/damage/DamageSource;F)V
+accessible method net/minecraft/screen/AnvilScreenHandler getForgingSlotsManager ()Lnet/minecraft/screen/slot/ForgingSlotsManager;
+accessible field net/minecraft/screen/AnvilScreenHandler levelCost Lnet/minecraft/screen/Property;
 accessible field net/minecraft/entity/LivingEntity lastDamageTaken F
+accessible field net/minecraft/screen/ForgingScreenHandler input Lnet/minecraft/inventory/Inventory;
+accessible field net/minecraft/screen/ForgingScreenHandler output Lnet/minecraft/inventory/CraftingResultInventory;

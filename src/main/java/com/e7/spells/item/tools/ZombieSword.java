@@ -1,6 +1,7 @@
 package com.e7.spells.item.tools;
 
 import com.e7.spells.E7SpellsCommon;
+import com.e7.spells.item.WeaponItem;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.networking.payloads.ZombieSwordParticleAnimationPacket;
 import com.e7.spells.util.CCAComponents;
@@ -86,6 +87,8 @@ public class ZombieSword extends WeaponItem
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§7Heal yourself for §c%d ❤ §7and".formatted(HEAL_AMOUNT)));
         tooltip.add(Text.literal("§7others within §e%d blocks §7for §c%d ❤".formatted(HEAL_RANGE, ALLY_HEAL_AMOUNT)));
+        tooltip.add(Text.literal("§8Mana Cost: §3%d".formatted(MANA_COST)));
+
 
         Entity player = MinecraftClient.getInstance().player;
         if (player == null) return;

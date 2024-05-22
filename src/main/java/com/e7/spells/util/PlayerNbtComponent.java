@@ -13,6 +13,7 @@ public class PlayerNbtComponent implements Component, AutoSyncedComponent
     private int mana = 0;
     private int max_mana = 500;
     private int zombie_sword_charges = 0;
+    private int wither_shield_cooldown = 100;
 
     public PlayerNbtComponent(PlayerEntity user)
     {
@@ -25,6 +26,7 @@ public class PlayerNbtComponent implements Component, AutoSyncedComponent
         this.mana = nbt.getInt("mana");
         this.max_mana = nbt.getInt("max_mana");
         this.zombie_sword_charges = nbt.getInt("zombie_sword_charges");
+        this.wither_shield_cooldown = nbt.getInt("wither_shield_cooldown");
     }
 
     @Override
@@ -33,6 +35,7 @@ public class PlayerNbtComponent implements Component, AutoSyncedComponent
         nbt.putInt("mana", this.mana);
         nbt.putInt("max_mana", this.max_mana);
         nbt.putInt("zombie_sword_charges", this.zombie_sword_charges);
+        nbt.putInt("wither_shield_cooldown", this.wither_shield_cooldown);
     }
 
     public boolean subtractAbilityCost(int manaCost)
@@ -64,7 +67,7 @@ public class PlayerNbtComponent implements Component, AutoSyncedComponent
         this.mana += amount;
     }
 
-    public void addMana(int percent)
+    public void addMana(float percent)
     {
         this.mana += percent * this.max_mana / 100;
         this.mana = Math.min(this.max_mana, this.mana);
@@ -93,5 +96,24 @@ public class PlayerNbtComponent implements Component, AutoSyncedComponent
     public void setMax_mana(int max_mana)
     {
         this.max_mana = max_mana;
+    }
+
+    public int getWither_shield_cooldown()
+    {
+        return wither_shield_cooldown;
+    }
+
+    public void setWither_shield_cooldown(int wither_shield_cooldown)
+    {
+        this.wither_shield_cooldown = wither_shield_cooldown;
+    }
+
+    public void incrementWither_shield_cooldown(int ticks)
+    {
+        this.wither_shield_cooldown -= ticks;
+        if (this.wither_shield_cooldown < 0)
+        {
+            this.wither_shield_cooldown = 0;
+        }
     }
 }

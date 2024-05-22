@@ -1,7 +1,7 @@
 package com.e7.spells.networking;
 
 import com.e7.spells.item.tools.AspectOfTheEnd;
-import com.e7.spells.item.tools.Hyperion;
+import com.e7.spells.item.tools.WitherBlade;
 import com.e7.spells.networking.payloads.UseAotePacket;
 import com.e7.spells.networking.payloads.UseHyperionPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -34,7 +34,7 @@ public class ServerPacketManager
         }));
         ServerPlayNetworking.registerGlobalReceiver(UseHyperionPacket.ID, ((payload, context) -> {
 
-            Hyperion.doWitherImpact(context.player(), payload.vec());
+            WitherBlade.doWitherImpact(context.player(), payload.vec());
         }));
     }
 }

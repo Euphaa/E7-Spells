@@ -1,10 +1,12 @@
 package com.e7.spells.item.tools;
 
 import com.e7.spells.E7SpellsCommon;
+import com.e7.spells.item.WeaponItem;
 import com.e7.spells.networking.ClientPacketManager;
 import com.e7.spells.networking.ServerPacketManager;
 import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
 import com.e7.spells.networking.payloads.UseAotePacket;
+import com.e7.spells.util.CCAComponents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -33,6 +35,7 @@ public class AspectOfTheEnd extends WeaponItem
     public static final int ATTACK_DAMAGE = 2;
     public static final float ATTACK_SPEED = -2.4f;
     public static final int TELEPORT_DISTANCE = 12;
+    public static final int MANA_COST = 25;
     public AspectOfTheEnd()
     {
         super(MATERIAL, new Settings().attributeModifiers(createAttributeModifiers(MATERIAL, ATTACK_DAMAGE, ATTACK_SPEED)));
@@ -41,6 +44,7 @@ public class AspectOfTheEnd extends WeaponItem
 
     public static void doTeleport(ServerPlayerEntity user, Vec3d pos)
     {
+        if (!CCAComponents.PLAYER_NBT.get(user).subtractAbilityCost(MANA_COST)) return;
         user.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
         user.fallDistance = 0;
         for (PlayerEntity player : PlayerLookup.tracking(user))
@@ -82,6 +86,7 @@ public class AspectOfTheEnd extends WeaponItem
         tooltip.add(Text.literal(""));
         tooltip.add(Text.literal("§6Ability: Instant Transmission §e§lRIGHT CLICK"));
         tooltip.add(Text.literal("§7Teleport ahead of you by §e%d blocks".formatted(TELEPORT_DISTANCE)));
+        tooltip.add(Text.literal("§8Mana Cost: §3%d".formatted(MANA_COST)));
         tooltip.add(Text.literal(""));
         super.appendTooltip(stack, context, tooltip, type);
     }

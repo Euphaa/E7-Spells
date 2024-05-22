@@ -1,7 +1,7 @@
 package com.e7.spells.networking;
 
 import com.e7.spells.item.tools.AspectOfTheEnd;
-import com.e7.spells.item.tools.Hyperion;
+import com.e7.spells.item.tools.WitherBlade;
 import com.e7.spells.item.tools.ZombieSword;
 import com.e7.spells.networking.payloads.AoteParticleAnimationPacket;
 import com.e7.spells.networking.payloads.FerocityParticleAnimationPacket;
@@ -36,7 +36,7 @@ public class ClientPacketManager
         });
         ClientPlayNetworking.registerGlobalReceiver(HyperionParticleAnimationPacket.ID, (payload, context) -> {
 
-            Hyperion.doParticleAnimation(payload.vec());
+            WitherBlade.doParticleAnimation(payload.vec());
         });
     }
 

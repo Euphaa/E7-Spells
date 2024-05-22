@@ -7,6 +7,33 @@
   "item.e7-spells.zombie_sword": "§6Florid Zombie Sword",
   "item.e7-spells.aspect_of_the_end_sword": "§9Aspect of the End",
   "item.e7-spells.hyperion_sword": "§6Hyperion",
+  "item.e7-spells.astraea_sword": "§6Astraea",
+  "item.e7-spells.valkyrie_sword": "§6Valkyrie",
+  "item.e7-spells.scylla_sword": "§6Scylla",
+
+  "item.e7-spells.wither_shield": "§5Wither Shield",
+  "item.e7-spells.implosion": "§5Implosion",
+  "item.e7-spells.shadow_warp": "§5Shadow Warp",
+
+  "item.e7-spells.storm_boots": "§6Storm Boots",
+  "item.e7-spells.storm_leggings": "§6Storm Leggings",
+  "item.e7-spells.storm_chestplate": "§6Storm Chestplate",
+  "item.e7-spells.storm_helmet": "§6Storm Helmet",
+
+  "item.e7-spells.goldor_boots": "§6Goldor Boots",
+  "item.e7-spells.goldor_leggings": "§6Goldor Leggings",
+  "item.e7-spells.goldor_chestplate": "§6Goldor Chestplate",
+  "item.e7-spells.goldor_helmet": "§6Goldor Helmet",
+
+  "item.e7-spells.necron_boots": "§6Necron Boots",
+  "item.e7-spells.necron_leggings": "§6Necron Leggings",
+  "item.e7-spells.necron_chestplate": "§6Necron Chestplate",
+  "item.e7-spells.necron_helmet": "§6Necron Helmet",
+
+  "item.e7-spells.maxor_boots": "§6Maxor Boots",
+  "item.e7-spells.maxor_leggings": "§6Maxor Leggings",
+  "item.e7-spells.maxor_chestplate": "§6Maxor Chestplate",
+  "item.e7-spells.maxor_helmet": "§6Maxor Helmet",
 
   "item.minecraft.potion.effect.ferocity_potion_0": "Ferocity I Potion",
   "item.minecraft.potion.effect.long_ferocity_potion_0": "Ferocity I Potion",

@@ -13,7 +13,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -48,7 +47,7 @@ public class ModArmorMaterials
     }
 
     //will give each attribute _per_ piece of armor
-    public static AttributeModifiersComponent makeArmorAttributes(ArmorItem.Type type, RegistryEntry<ArmorMaterial> material, ArmorModifier... modifiers)
+    public static AttributeModifiersComponent makeArmorAttributes(ArmorItem.Type type, RegistryEntry<ArmorMaterial> material, ItemModifier... modifiers)
     {
         AttributeModifierSlot slot = AttributeModifierSlot.ARMOR;
         switch (type)
@@ -64,7 +63,7 @@ public class ModArmorMaterials
                 new EntityAttributeModifier(UUID.randomUUID(), "Armor Attributes", ARMOR_DEFENSE_VALUES.get(material).get(type), EntityAttributeModifier.Operation.ADD_VALUE),
                 slot
         );
-        for (ArmorModifier modifier : modifiers)
+        for (ItemModifier modifier : modifiers)
         {
             component.add(
                     modifier.attribute(),

@@ -36,6 +36,12 @@ public class E7SpellsClient implements ClientModInitializer
                         entries.add(ModItems.ZOMBIE_SWORD);
                         entries.add(ModItems.ASPECT_OF_THE_END_SWORD);
                         entries.add(ModItems.HYPERION_SWORD);
+                        entries.add(ModItems.ASTRAEA_SWORD);
+                        entries.add(ModItems.VALKYRIE_SWORD);
+                        entries.add(ModItems.SCYLLA_SWORD);
+                        entries.add(ModItems.IMPLOSION_SCROLL);
+                        entries.add(ModItems.WITHER_SHIELD_SCROLL);
+                        entries.add(ModItems.SHADOW_WARP_SCROLL);
                         for (Item armorPiece : ModItems.STORM_ARMOR.values()) entries.add(armorPiece);
                         for (Item armorPiece : ModItems.NECRON_ARMOR.values()) entries.add(armorPiece);
                         for (Item armorPiece : ModItems.GOLDOR_ARMOR.values()) entries.add(armorPiece);
